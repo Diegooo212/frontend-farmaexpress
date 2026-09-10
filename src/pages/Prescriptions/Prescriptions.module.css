@@ -1,0 +1,152 @@
+.page {
+  max-width: 900px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.newButton {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.newButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.filters {
+  margin-bottom: 1rem;
+}
+
+.select {
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: var(--color-bg);
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 1.5rem;
+}
+
+.state {
+  padding: 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.error {
+  color: var(--color-status-rechazada);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.input {
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.submitButton {
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.drawerText {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.actionButton {
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rejectButton {
+  padding: 0.6rem;
+  border: 1px solid var(--color-status-rechazada);
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
+  color: var(--color-status-rechazada);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mockNotice {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}

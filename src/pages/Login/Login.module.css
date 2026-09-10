@@ -1,0 +1,136 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.card {
+  background: var(--color-surface);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  width: 360px;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: left;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.input {
+  padding: 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.forgotLink {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.submitButton {
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.registerText {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.registerLink {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.registerLink:hover {
+  text-decoration: underline;
+}
+
+.divider {
+  margin: 1.25rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.azureButton {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.azureButton:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.azureButton:disabled {
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.warning {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #92400e;
+  background-color: #fef3c7;
+  padding: 0.6rem;
+  border-radius: var(--radius-md);
+}
+
+.error {
+  font-size: 0.8rem;
+  color: var(--color-status-rechazada);
+  background-color: #fee2e2;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}

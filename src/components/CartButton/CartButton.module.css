@@ -1,0 +1,130 @@
+.cartButton {
+  position: relative;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+}
+
+.cartButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 999px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemName {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.itemPrice {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.qtyControls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.qtyControls button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.5rem;
+}
+
+.warning {
+  font-size: 0.8rem;
+  color: #92400e;
+  background-color: #fef3c7;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+}
+
+.checkoutButton {
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkoutButton:disabled {
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.success {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #065f46;
+  background-color: #d1fae5;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}
