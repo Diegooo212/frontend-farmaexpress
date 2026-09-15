@@ -19,26 +19,38 @@ export function CartProvider({ children }) {
   const addItem = (medicamento, cantidad = 1) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.id === medicamento.id);
+      const currentQty = existing ? existing.cantidad : 0;
+      const maxAddable = Math.max(0, medicamento.stock - currentQty);
+      const cantidadFinal = Math.min(cantidad, maxAddable);
+
+      if (cantidadFinal <= 0) return prev;
+
       if (existing) {
         return prev.map((i) =>
-          i.id === medicamento.id ? { ...i, cantidad: i.cantidad + cantidad } : i
+          i.id === medicamento.id ? { ...i, cantidad: i.cantidad + cantidadFinal } : i
         );
       }
       return [
         ...prev,
-        { id: medicamento.id, nombre: medicamento.nombre, precio: medicamento.precio, cantidad },
+        {
+          id: medicamento.id,
+          nombre: medicamento.nombre,
+          precio: medicamento.precio,
+          cantidad: cantidadFinal,
+        },
       ];
     });
   };
 
   const removeItem = (id) => setItems((prev) => prev.filter((i) => i.id !== id));
 
-  const updateQty = (id, cantidad) => {
+  const updateQty = (id, cantidad, maxStock = Infinity) => {
     if (cantidad <= 0) {
       removeItem(id);
       return;
     }
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad } : i)));
+    const cantidadFinal = Math.min(cantidad, maxStock);
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad: cantidadFinal } : i)));
   };
 
   const clearCart = () => setItems([]);

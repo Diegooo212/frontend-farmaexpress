@@ -76,6 +76,11 @@
   cursor: pointer;
 }
 
+.qtyControls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .removeButton {
   background: none;
   border: none;

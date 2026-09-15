@@ -1,22 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
 import { useCart } from '../../context/CartContext';
 import styles from './ProductDetailModal.module.css';
 
 export default function ProductDetailModal({ medicamento, isOpen, onClose }) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [cantidad, setCantidad] = useState(1);
   const [added, setAdded] = useState(false);
 
+  useEffect(() => {
+    setCantidad(1);
+  }, [medicamento?.id]);
+
   if (!medicamento) return null;
 
+  const cartQty = items.find((i) => i.id === medicamento.id)?.cantidad || 0;
+  const available = medicamento.stock - cartQty;
   const isOutOfStock = medicamento.stock === 0;
+  const allInCart = !isOutOfStock && available <= 0;
 
   const handleAdd = () => {
-    addItem(medicamento, cantidad);
+    if (available <= 0) return;
+    addItem(medicamento, Math.min(cantidad, available));
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
+
+  const addLabel = added
+    ? 'Agregado ✓'
+    : isOutOfStock
+    ? 'Sin stock'
+    : allInCart
+    ? 'Ya tienes todo el stock en el carrito'
+    : 'Agregar al carrito';
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={medicamento.nombre}>
@@ -27,30 +43,35 @@ export default function ProductDetailModal({ medicamento, isOpen, onClose }) {
         {isOutOfStock ? 'Sin stock disponible' : `${medicamento.stock} unidades disponibles`}
       </p>
 
-      {!isOutOfStock && (
+      {!isOutOfStock && !allInCart && (
         <div className={styles.qtyRow}>
           <label htmlFor="detail-qty">Cantidad</label>
           <div className={styles.qtyControls}>
-            <button onClick={() => setCantidad((q) => Math.max(1, q - 1))}>-</button>
+            <button type="button" onClick={() => setCantidad((q) => Math.max(1, q - 1))}>
+              -
+            </button>
             <input
               id="detail-qty"
               type="number"
               min="1"
-              max={medicamento.stock}
+              max={available}
               value={cantidad}
               onChange={(e) =>
-                setCantidad(Math.min(medicamento.stock, Math.max(1, Number(e.target.value))))
+                setCantidad(Math.min(available, Math.max(1, Number(e.target.value))))
               }
             />
-            <button onClick={() => setCantidad((q) => Math.min(medicamento.stock, q + 1))}>
+            <button
+              type="button"
+              onClick={() => setCantidad((q) => Math.min(available, q + 1))}
+            >
               +
             </button>
           </div>
         </div>
       )}
 
-      <button className={styles.addButton} onClick={handleAdd} disabled={isOutOfStock}>
-        {added ? 'Agregado ✓' : isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
+      <button className={styles.addButton} onClick={handleAdd} disabled={isOutOfStock || allInCart}>
+        {addLabel}
       </button>
     </Modal>
   );

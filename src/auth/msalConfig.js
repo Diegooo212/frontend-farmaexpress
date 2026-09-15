@@ -13,6 +13,7 @@ export const msalConfig = {
 
 export const loginRequest = {
   scopes: [`api://${import.meta.env.VITE_AZURE_API_CLIENT_ID}/access_as_user`],
+  prompt: 'select_account',
 };
 
 export const isAzureConfigured = Boolean(

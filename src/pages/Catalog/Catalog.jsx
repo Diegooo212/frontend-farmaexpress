@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Pill } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -50,8 +51,14 @@ export default function Catalog() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Catálogo de medicamentos</h1>
+      <div className={styles.banner}>
+        <div className={styles.bannerIcon}>
+          <Pill size={28} />
+        </div>
+        <div className={styles.bannerText}>
+          <h1 className={styles.title}>Catálogo de medicamentos</h1>
+          <p className={styles.bannerSubtitle}>Encuentra tus medicamentos y agrégalos al carrito</p>
+        </div>
         {isAdmin && (
           <button className={styles.newButton} onClick={() => setIsCreateOpen(true)}>
             + Añadir medicamento

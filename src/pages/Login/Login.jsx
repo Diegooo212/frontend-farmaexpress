@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
 import { loginRequest, isAzureConfigured } from '../../auth/msalConfig';
@@ -8,11 +8,18 @@ import styles from './Login.module.css';
 
 export default function Login() {
   const { instance } = useMsal();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleAzureLogin = () => {
     if (!isAzureConfigured) return;
@@ -33,6 +40,10 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
+        <Link to="/" className={styles.backLink}>
+          ← Volver al inicio
+        </Link>
+
         <h1 className={styles.title}>FarmaExpress</h1>
         <p className={styles.subtitle}>Inicia sesión para continuar</p>
 

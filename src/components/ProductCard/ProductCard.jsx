@@ -15,7 +15,7 @@ const STOCK_LABEL = {
 };
 
 export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail }) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [precio, setPrecio] = useState(medicamento.precio);
   const [stock, setStock] = useState(medicamento.stock);
@@ -23,6 +23,10 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
 
   const stockLevel = getStockLevel(medicamento.stock);
   const isOutOfStock = stockLevel === 'out';
+
+  const cartQty = items.find((i) => i.id === medicamento.id)?.cantidad || 0;
+  const available = medicamento.stock - cartQty;
+  const allInCart = !isOutOfStock && available <= 0;
 
   const handleSave = (e) => {
     e.stopPropagation();
@@ -39,6 +43,7 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
 
   const handleAgregar = (e) => {
     e.stopPropagation();
+    if (available <= 0) return;
     addItem(medicamento, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
@@ -48,6 +53,14 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
     e.stopPropagation();
     setIsEditing(true);
   };
+
+  const buyLabel = added
+    ? 'Agregado ✓'
+    : isOutOfStock
+    ? 'Sin stock'
+    : allInCart
+    ? 'Todo en el carrito'
+    : 'Agregar al carrito';
 
   return (
     <div className={styles.card} onClick={() => onViewDetail(medicamento)}>
@@ -99,8 +112,12 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
             </button>
           )
         ) : (
-          <button className={styles.buyButton} disabled={isOutOfStock} onClick={handleAgregar}>
-            {added ? 'Agregado ✓' : isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
+          <button
+            className={styles.buyButton}
+            disabled={isOutOfStock || allInCart}
+            onClick={handleAgregar}
+          >
+            {buyLabel}
           </button>
         )}
       </div>

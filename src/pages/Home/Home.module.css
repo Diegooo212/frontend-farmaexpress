@@ -1,57 +1,183 @@
+.page {
+  padding-bottom: 3rem;
+}
+
 .hero {
   text-align: center;
-  padding: 4rem 1rem;
+  padding: 4rem 1.5rem 5rem;
+  background: linear-gradient(160deg, #059669 0%, #047857 55%, #065f46 100%);
+  color: #ffffff;
+  border-radius: 0 0 32px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12) 0, transparent 35%),
+    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.1) 0, transparent 40%);
+  pointer-events: none;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.pulseDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4ade80;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(74, 222, 128, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+.heroIcon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.25rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-text);
+  font-size: 2.25rem;
+  font-weight: 800;
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .subtitle {
-  color: var(--color-text-muted);
-  max-width: 500px;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 520px;
   margin: 0 auto 2rem;
+  position: relative;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .primaryButton {
-  padding: 0.75rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
   border: none;
   border-radius: var(--radius-md);
-  background-color: var(--color-primary);
-  color: #ffffff;
-  font-weight: 600;
+  background-color: #ffffff;
+  color: var(--color-primary);
+  font-weight: 700;
   cursor: pointer;
+  transition: transform 0.15s ease;
 }
 
 .primaryButton:hover {
-  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
 }
 
 .secondaryButton {
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--color-border);
+  padding: 0.85rem 1.75rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 600;
+  background-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
-.warning {
-  margin-top: 1.5rem;
-  font-size: 0.85rem;
-  color: #92400e;
-  background-color: #fef3c7;
-  padding: 0.6rem 1rem;
+.secondaryButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.features {
+  max-width: 1000px;
+  margin: -2.5rem auto 0;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  position: relative;
+}
+
+.featureCard {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-md);
-  display: inline-block;
+  background-color: #d1fae5;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.featureTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+}
+
+.featureText {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
 }

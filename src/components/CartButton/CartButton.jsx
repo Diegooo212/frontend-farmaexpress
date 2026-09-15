@@ -8,7 +8,7 @@ import styles from './CartButton.module.css';
 
 export default function CartButton() {
   const { items, updateQty, removeItem, total, count, clearCart } = useCart();
-  const { purchase } = useCatalog();
+  const { medicamentos, purchase } = useCatalog();
   const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -36,22 +36,34 @@ export default function CartButton() {
           <p className={styles.empty}>Tu carrito está vacío.</p>
         ) : (
           <>
-            {items.map((item) => (
-              <div key={item.id} className={styles.item}>
-                <div className={styles.itemInfo}>
-                  <span className={styles.itemName}>{item.nombre}</span>
-                  <span className={styles.itemPrice}>${item.precio} c/u</span>
+            {items.map((item) => {
+              const medicamento = medicamentos.find((m) => m.id === item.id);
+              const stock = medicamento?.stock ?? Infinity;
+              const atMax = item.cantidad >= stock;
+
+              return (
+                <div key={item.id} className={styles.item}>
+                  <div className={styles.itemInfo}>
+                    <span className={styles.itemName}>{item.nombre}</span>
+                    <span className={styles.itemPrice}>${item.precio} c/u</span>
+                  </div>
+                  <div className={styles.qtyControls}>
+                    <button onClick={() => updateQty(item.id, item.cantidad - 1, stock)}>-</button>
+                    <span>{item.cantidad}</span>
+                    <button
+                      onClick={() => updateQty(item.id, item.cantidad + 1, stock)}
+                      disabled={atMax}
+                      title={atMax ? 'No queda más stock disponible' : undefined}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button className={styles.removeButton} onClick={() => removeItem(item.id)}>
+                    ×
+                  </button>
                 </div>
-                <div className={styles.qtyControls}>
-                  <button onClick={() => updateQty(item.id, item.cantidad - 1)}>-</button>
-                  <span>{item.cantidad}</span>
-                  <button onClick={() => updateQty(item.id, item.cantidad + 1)}>+</button>
-                </div>
-                <button className={styles.removeButton} onClick={() => removeItem(item.id)}>
-                  ×
-                </button>
-              </div>
-            ))}
+              );
+            })}
 
             <div className={styles.total}>
               <span>Total</span>
