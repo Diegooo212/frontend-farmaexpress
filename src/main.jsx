@@ -6,23 +6,26 @@ import { AuthContextProvider } from './context/AuthContext';
 import { CatalogProvider } from './context/CatalogContext';
 import { CartProvider } from './context/CartContext';
 import { PrescriptionsProvider } from './context/PrescriptionsContext';
+import { ThemeProvider } from './context/ThemeContext';
 import App from './App';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <AuthContextProvider>
-          <CatalogProvider>
-            <PrescriptionsProvider>
-              <CartProvider>
-                <App />
-              </CartProvider>
-            </PrescriptionsProvider>
-          </CatalogProvider>
-        </AuthContextProvider>
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AuthContextProvider>
+            <CatalogProvider>
+              <PrescriptionsProvider>
+                <CartProvider>
+                  <App />
+                </CartProvider>
+              </PrescriptionsProvider>
+            </CatalogProvider>
+          </AuthContextProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>
 );

@@ -24,3 +24,14 @@
   --radius-lg: 12px;
   --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+[data-theme='dark'] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-primary: #10b981;
+  --color-primary-hover: #34d399;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.5);
+}

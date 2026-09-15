@@ -12,7 +12,6 @@
   font-weight: 700;
   font-size: 1.25rem;
   color: var(--color-primary);
-  margin-bottom: 2rem;
 }
 
 .nav {
@@ -65,4 +64,11 @@
 .logoutButton:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }

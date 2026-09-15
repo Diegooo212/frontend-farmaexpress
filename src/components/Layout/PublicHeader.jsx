@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CartButton from '../CartButton/CartButton';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import styles from './PublicHeader.module.css';
 
 export default function PublicHeader() {
@@ -27,6 +28,7 @@ export default function PublicHeader() {
         </button>
       </nav>
       <div className={styles.actions}>
+        <ThemeToggle />
         <CartButton />
         {isAuthenticated ? (
           <>

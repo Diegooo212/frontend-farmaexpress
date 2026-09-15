@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import styles from './Navbar.module.css';
 
 const NAV_ITEMS = [
@@ -14,7 +15,10 @@ export default function Navbar() {
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>FarmaExpress</div>
+      <div className={styles.brandRow}>
+        <div className={styles.brand}>FarmaExpress</div>
+        <ThemeToggle />
+      </div>
       <nav className={styles.nav}>
         {NAV_ITEMS.map((item) => (
           <NavLink
