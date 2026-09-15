@@ -7,7 +7,7 @@ import styles from './Register.module.css';
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nombre: '', email: '', password: '', confirmPassword: '', rol: 'Cliente' });
+  const [form, setForm] = useState({ nombre: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -97,20 +97,6 @@ export default function Register() {
               onChange={handleChange('confirmPassword')}
               required
             />
-          </label>
-
-          <label className={styles.label} htmlFor="register-rol">
-            Rol (solo para pruebas — cuando Azure esté conectado, esto lo definirá el tenant)
-            <select
-              id="register-rol"
-              className={styles.input}
-              value={form.rol || 'Cliente'}
-              onChange={handleChange('rol')}
-            >
-              <option value="Cliente">Cliente</option>
-              <option value="Operador">Operador (Químico Farmacéutico)</option>
-              <option value="Admin">Admin</option>
-            </select>
           </label>
 
           {error && <p className={styles.error}>{error}</p>}
