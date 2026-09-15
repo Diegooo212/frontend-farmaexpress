@@ -11,7 +11,7 @@ import styles from './Catalog.module.css';
 export default function Catalog() {
   const { user } = useAuth();
   const isAdmin = (user?.roles || []).includes('Admin');
-  const { medicamentos, loading, usingMock, createMedicamento, updateMedicamento } = useCatalog();
+  const { medicamentos, loading, createMedicamento, updateMedicamento } = useCatalog();
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 400);
@@ -65,12 +65,6 @@ export default function Catalog() {
           </button>
         )}
       </div>
-
-      {usingMock && (
-        <p className={styles.mockNotice}>
-          Mostrando datos de ejemplo — catalog-svc todavía no está desplegado.
-        </p>
-      )}
 
       <div className={styles.filters}>
         <input

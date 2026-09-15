@@ -12,7 +12,7 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 
 export default function MyPrescriptions() {
   const { user } = useAuth();
-  const { recetas, loading, usingMock, createReceta } = usePrescriptions();
+  const { recetas, loading, createReceta } = usePrescriptions();
   const fileInputRef = useRef(null);
 
   const [nombre, setNombre] = useState(user?.nombre || '');
@@ -104,12 +104,6 @@ export default function MyPrescriptions() {
           tu domicilio.
         </p>
       </div>
-
-      {usingMock && (
-        <p className={styles.mockNotice}>
-          Mostrando datos de ejemplo — prescriptions-svc todavía no está desplegado.
-        </p>
-      )}
 
       <div className={styles.grid}>
         <form className={styles.form} onSubmit={handleSubmit}>
