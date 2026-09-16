@@ -33,7 +33,7 @@ export function PrescriptionsProvider({ children }) {
       const data = await getPrescriptions();
       setRecetas(data);
       setUsingMock(false);
-    } catch (err) {
+    } catch {
       const stored = getStoredMock();
       const initial = stored || PRESCRIPTIONS_MOCK;
       setRecetas(initial);
@@ -45,6 +45,8 @@ export function PrescriptionsProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    // Carga inicial de recetas sincronizando con el backend (o el mock de respaldo).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -90,6 +92,7 @@ export function PrescriptionsProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function usePrescriptions() {
   const ctx = useContext(PrescriptionsContext);
   if (!ctx) throw new Error('usePrescriptions debe usarse dentro de PrescriptionsProvider');

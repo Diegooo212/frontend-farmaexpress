@@ -19,7 +19,7 @@ httpClient.interceptors.request.use(async (config) => {
       account: accounts[0],
     });
     config.headers.Authorization = `Bearer ${response.accessToken}`;
-  } catch (error) {
+  } catch {
     // El token expiró y no se pudo renovar en silencio: manda de nuevo al login
     await msalInstance.acquireTokenRedirect(loginRequest);
   }

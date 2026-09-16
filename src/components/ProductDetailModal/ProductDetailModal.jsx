@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Modal from '../Modal/Modal';
 import { useCart } from '../../context/CartContext';
 import styles from './ProductDetailModal.module.css';
@@ -7,10 +7,6 @@ export default function ProductDetailModal({ medicamento, isOpen, onClose }) {
   const { addItem, items } = useCart();
   const [cantidad, setCantidad] = useState(1);
   const [added, setAdded] = useState(false);
-
-  useEffect(() => {
-    setCantidad(1);
-  }, [medicamento?.id]);
 
   if (!medicamento) return null;
 

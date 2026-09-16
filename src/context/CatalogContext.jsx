@@ -33,7 +33,7 @@ export function CatalogProvider({ children }) {
       const data = await getMedicamentos();
       setMedicamentos(data);
       setUsingMock(false);
-    } catch (err) {
+    } catch {
       const stored = getStoredMock();
       const initial = stored || CATALOG_MOCK;
       setMedicamentos(initial);
@@ -45,6 +45,8 @@ export function CatalogProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    // Carga inicial del catálogo sincronizando con el backend (o el mock de respaldo).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -115,6 +117,7 @@ export function CatalogProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCatalog() {
   const ctx = useContext(CatalogContext);
   if (!ctx) throw new Error('useCatalog debe usarse dentro de CatalogProvider');

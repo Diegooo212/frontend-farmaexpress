@@ -117,6 +117,7 @@ export default function Catalog() {
       )}
 
       <ProductDetailModal
+        key={selectedProduct?.id}
         medicamento={selectedProduct}
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
