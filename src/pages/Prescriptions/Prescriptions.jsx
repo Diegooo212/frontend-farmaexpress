@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { usePrescriptions } from '../../context/PrescriptionsContext';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
-import Drawer from '../../components/Drawer/Drawer';
+import PrescriptionDetailDrawer from '../../components/PrescriptionDetailDrawer/PrescriptionDetailDrawer';
 import styles from './Prescriptions.module.css';
 
 const STATUS_OPTIONS = [
@@ -14,18 +14,11 @@ const STATUS_OPTIONS = [
   'RECHAZADA',
 ];
 
-const NEXT_STATUS = {
+const NEXT_STATUS_MAP = {
   INGRESADA: 'VALIDADA',
   VALIDADA: 'EN_PREPARACION',
   EN_PREPARACION: 'LISTA_RETIRO',
   LISTA_RETIRO: 'DISPENSADA',
-};
-
-const NEXT_LABEL = {
-  INGRESADA: 'Validar',
-  VALIDADA: 'Pasar a preparación',
-  EN_PREPARACION: 'Marcar lista para retiro',
-  LISTA_RETIRO: 'Marcar dispensada',
 };
 
 export default function Prescriptions() {
@@ -43,13 +36,13 @@ export default function Prescriptions() {
   );
 
   const handleAdvance = async (receta) => {
-    const next = NEXT_STATUS[receta.status];
+    const next = NEXT_STATUS_MAP[receta.status];
     if (!next) return;
     await updateStatus(receta.id, next);
     setSelectedReceta(null);
   };
 
-  const handleRechazar = async (receta) => {
+  const handleReject = async (receta) => {
     await updateStatus(receta.id, 'RECHAZADA');
     setSelectedReceta(null);
   };
@@ -113,32 +106,14 @@ export default function Prescriptions() {
         </table>
       )}
 
-      <Drawer
+      <PrescriptionDetailDrawer
+        receta={selectedReceta}
         isOpen={!!selectedReceta}
         onClose={() => setSelectedReceta(null)}
-        title={selectedReceta ? `Receta de ${selectedReceta.pacienteNombre}` : ''}
-      >
-        {selectedReceta && (
-          <>
-            <div>
-              <StatusBadge status={selectedReceta.status} />
-            </div>
-            <p className={styles.drawerText}>Fecha: {selectedReceta.fechaCreacion}</p>
-
-            {isOperador && NEXT_STATUS[selectedReceta.status] && (
-              <button className={styles.actionButton} onClick={() => handleAdvance(selectedReceta)}>
-                {NEXT_LABEL[selectedReceta.status]}
-              </button>
-            )}
-
-            {isOperador && ['INGRESADA', 'VALIDADA'].includes(selectedReceta.status) && (
-              <button className={styles.rejectButton} onClick={() => handleRechazar(selectedReceta)}>
-                Rechazar
-              </button>
-            )}
-          </>
-        )}
-      </Drawer>
+        canManage={isOperador}
+        onAdvance={handleAdvance}
+        onReject={handleReject}
+      />
     </div>
   );
 }

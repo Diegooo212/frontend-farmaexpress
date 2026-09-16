@@ -9,6 +9,15 @@
   color: var(--color-text);
 }
 
+.mockNotice {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
 .columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -30,17 +39,28 @@
 }
 
 .card {
+  display: block;
+  width: 100%;
+  text-align: left;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.75rem;
   margin-bottom: 0.75rem;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .patientName {
@@ -48,19 +68,9 @@
   color: var(--color-text);
 }
 
-.actionButton {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-radius: var(--radius-md);
-  background-color: var(--color-primary);
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.actionButton:hover {
-  background-color: var(--color-primary-hover);
+.cardHint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
 .empty {
@@ -72,17 +82,4 @@
   padding: 2rem;
   text-align: center;
   color: var(--color-text-muted);
-}
-
-.error {
-  color: var(--color-status-rechazada);
-}
-
-.mockNotice {
-  background-color: #fef3c7;
-  color: #92400e;
-  padding: 0.6rem 1rem;
-  border-radius: var(--radius-md);
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
 }
