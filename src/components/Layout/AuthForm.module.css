@@ -1,0 +1,38 @@
+/* Estilos compartidos por los formularios de acceso (login, registro, recuperación). */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.inlineLink {
+  align-self: flex-end;
+  margin-top: -0.5rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.footnote {
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.footnote a {
+  font-weight: 700;
+}

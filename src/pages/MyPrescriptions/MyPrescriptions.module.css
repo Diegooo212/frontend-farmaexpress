@@ -1,0 +1,270 @@
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 3rem var(--gutter) 0;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  max-width: 52ch;
+  margin-top: 1rem;
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.formTitle {
+  font-size: var(--text-xl);
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 1.5rem 0 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  min-width: 0;
+}
+
+.fieldset legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.option:hover {
+  border-color: var(--color-text-muted);
+}
+
+.option:focus-within {
+  box-shadow: var(--focus-ring);
+}
+
+.option input {
+  position: absolute;
+  opacity: 0;
+}
+
+.optionOn {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.optionText strong {
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.75rem 1rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.dropzone strong {
+  color: var(--color-primary);
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.dropzone:focus-within {
+  box-shadow: var(--focus-ring);
+}
+
+.fileChosen {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+}
+
+.fileName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.count {
+  color: var(--color-text-muted);
+}
+
+label .count {
+  align-self: flex-end;
+}
+
+.history {
+  position: sticky;
+  top: calc(var(--header-height) + 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.historyHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.historyDate {
+  font-weight: 700;
+}
+
+.historyFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.historyFacts div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.historyFacts dt {
+  min-width: 5rem;
+  color: var(--color-text-muted);
+}
+
+.historyFacts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.comment {
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.details summary {
+  width: fit-content;
+  border-radius: var(--radius-box);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.details[open] summary {
+  margin-bottom: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .history {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .row,
+  .options {
+    grid-template-columns: 1fr;
+  }
+}

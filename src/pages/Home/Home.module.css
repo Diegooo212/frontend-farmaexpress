@@ -1,0 +1,226 @@
+/* ---------- Hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: end;
+  gap: 3rem;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) var(--gutter) 0;
+}
+
+.heroText {
+  padding-bottom: 3.5rem;
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.subtitle {
+  max-width: 44ch;
+  margin-top: 1.5rem;
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* Estante de cajas: el único momento animado de la página */
+.shelf {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.shelfBoxes {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: end;
+  gap: 1.1rem;
+  padding: 0 1.25rem;
+}
+
+.shelfBox {
+  margin-bottom: 0;
+  animation: drop 0.7s cubic-bezier(0.3, 1.35, 0.5, 1) both;
+}
+
+.shelfBox:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.shelfBox:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.plank {
+  height: 14px;
+  border-radius: var(--radius-box);
+  background: var(--color-ink);
+}
+
+[data-theme='dark'] .plank {
+  background: var(--color-border);
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-70px);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Recetas ---------- */
+.recipes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 3rem 4rem;
+  max-width: var(--page-width);
+  margin: 7rem auto 0;
+  padding: clamp(2rem, 5vw, 4rem) var(--gutter);
+  border-top: 2px solid var(--color-text);
+}
+
+.recipesIntro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.sectionTitle {
+  max-width: 18ch;
+  font-size: var(--text-2xl);
+  font-weight: 800;
+}
+
+.sectionLead {
+  max-width: 48ch;
+  color: var(--color-text-muted);
+}
+
+.latest {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+  max-width: 460px;
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.latest > ol {
+  width: 100%;
+}
+
+.latestHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  font-weight: 700;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+/* Línea que une los pasos: es una secuencia real */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 3rem;
+  bottom: 0.25rem;
+  left: calc(1.5rem - 1px);
+  width: 2px;
+  background: var(--color-border);
+}
+
+.stepNumber {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+
+.step:last-child .stepNumber {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.stepTitle {
+  margin-top: 0.6rem;
+  font-size: var(--text-lg);
+}
+
+.stepText {
+  margin-top: 0.3rem;
+  max-width: 42ch;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 860px) {
+  .hero,
+  .recipes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heroText {
+    padding-bottom: 0;
+  }
+
+  .shelf {
+    min-height: 0;
+  }
+
+  .shelfBoxes {
+    padding: 0 0.5rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .shelfBoxes {
+    grid-template-columns: 1fr 1.2fr;
+  }
+
+  .shelfBox:nth-child(3) {
+    display: none;
+  }
+}

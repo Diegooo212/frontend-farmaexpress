@@ -1,0 +1,7 @@
+.inverted {
+  color: var(--color-on-ink);
+}
+
+.inverted:hover {
+  background: color-mix(in srgb, var(--color-on-ink) 12%, transparent);
+}

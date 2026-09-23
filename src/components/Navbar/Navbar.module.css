@@ -1,0 +1,134 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100vh;
+  padding: 1.25rem 1rem;
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: var(--radius-md);
+  color: color-mix(in srgb, var(--color-on-ink) 75%, transparent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  background: color-mix(in srgb, var(--color-on-ink) 10%, transparent);
+  color: var(--color-on-ink);
+}
+
+.linkActive {
+  background: var(--color-on-ink);
+  color: var(--color-ink);
+}
+
+.linkActive:hover {
+  background: var(--color-on-ink);
+  color: var(--color-ink);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding: 0.75rem 0.25rem 0 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-on-ink) 18%, transparent);
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.userName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.userRole {
+  font-size: var(--text-sm);
+  color: color-mix(in srgb, var(--color-on-ink) 65%, transparent);
+}
+
+.logout {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-on-ink);
+  cursor: pointer;
+}
+
+.logout:hover {
+  background: color-mix(in srgb, var(--color-on-ink) 12%, transparent);
+}
+
+@media (max-width: 860px) {
+  .sidebar {
+    z-index: 50;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    height: auto;
+    padding: 0.6rem var(--gutter);
+  }
+
+  .brandRow {
+    padding-left: 0;
+  }
+
+  .nav {
+    order: 3;
+    flex-direction: row;
+    flex-basis: 100%;
+    overflow-x: auto;
+  }
+
+  .link {
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .footer {
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: none;
+  }
+
+  .user {
+    display: none;
+  }
+}

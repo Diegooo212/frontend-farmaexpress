@@ -1,0 +1,44 @@
+.badge {
+  --status: var(--color-status-ingresada);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.7rem 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--status) 13%, transparent);
+  color: var(--status);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.INGRESADA {
+  --status: var(--color-status-ingresada);
+}
+
+.VALIDADA {
+  --status: var(--color-status-validada);
+}
+
+.EN_PREPARACION {
+  --status: var(--color-status-preparacion);
+}
+
+.LISTA_RETIRO {
+  --status: var(--color-status-lista);
+}
+
+.DISPENSADA {
+  --status: var(--color-status-dispensada);
+}
+
+.RECHAZADA {
+  --status: var(--color-status-rechazada);
+}

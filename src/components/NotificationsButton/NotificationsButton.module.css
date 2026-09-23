@@ -1,0 +1,146 @@
+.wrapper {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 2px solid var(--color-bg);
+  border-radius: var(--radius-pill);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 80;
+  width: min(380px, calc(100vw - 32px));
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-float);
+  animation: open 0.16s ease-out;
+}
+
+.panelHead {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.panelHead h2 {
+  font-size: var(--text-lg);
+}
+
+.panelHead a {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.empty {
+  padding: 1.25rem 1.1rem;
+  color: var(--color-text-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  --status: var(--color-status-ingresada);
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.new {
+  background: var(--color-primary-soft);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status);
+}
+
+.message {
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.note {
+  margin-top: 0.3rem;
+  font-size: var(--text-sm);
+}
+
+.meta {
+  margin-top: 0.3rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.VALIDADA {
+  --status: var(--color-status-validada);
+}
+
+.EN_PREPARACION {
+  --status: var(--color-status-preparacion);
+}
+
+.LISTA_RETIRO {
+  --status: var(--color-status-lista);
+}
+
+.DISPENSADA {
+  --status: var(--color-status-dispensada);
+}
+
+.RECHAZADA {
+  --status: var(--color-status-rechazada);
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* En pantallas angostas el panel se ancla a los bordes de la pantalla, no a la campana */
+@media (max-width: 560px) {
+  .panel {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+}
