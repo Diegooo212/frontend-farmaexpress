@@ -1,16 +1,52 @@
-# React + Vite
+# FarmaExpress: Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend de **FarmaExpress**, plataforma de dispensación y retiro de recetas médicas.
+Curso DSY1107 Desarrollo Cloud Native I (DuocUC).
 
-Currently, two official plugins are available:
+- **React 19 + Vite**
+- **MSAL** (`@azure/msal-browser` / `@azure/msal-react`) con **Microsoft Entra External ID** como IDaaS
+- Consume el backend (microservicios Spring Boot) **a través de AWS API Gateway**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Backend: repositorio `backend-farmaexpress`.
 
-## React Compiler
+## Autenticación (OAuth 2.0 / OpenID Connect)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Pieza | Archivo | Qué hace |
+|---|---|---|
+| Configuración MSAL | `src/auth/msalConfig.js` | Tenant `ciamlogin.com`, client id, redirect URI y scopes. Pide el scope de la API: `api://<client-id>/access_as_user`. |
+| Login / registro / logout | `src/context/AuthContext.jsx` | `loginRedirect` (**Authorization Code + PKCE**, con state y nonce validados por MSAL). `prompt=create` abre el registro del user flow. `logoutRedirect` cierra la sesión en Entra ID. |
+| Interceptor HTTP | `src/api/httpClient.js` | Pide el **access token** con `acquireTokenSilent` y lo envía en `Authorization: Bearer` a cada llamada. Si la sesión venció, vuelve a iniciar sesión. |
+| Guards | `src/components/ProtectedRoute` | Exigen sesión. El panel de farmacia además exige el rol `Operador` o `Administrador`, leído del claim **`roles`**. |
+| Claims | `src/pages/MyAccount` ("Mi cuenta") | Muestra `iss`, `aud`, `scp` (scopes), `roles` y `exp` del ID token y del access token. Permite copiar el token para probar la API. |
 
-## Expanding the ESLint configuration
+Configuración del tenant, la App Registration, los roles y el user flow: **[docs/ENTRA-ID.md](docs/ENTRA-ID.md)**.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Ejecutar en local
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+```
+
+Variables en `.env`:
+
+| Variable | Valor |
+|---|---|
+| `VITE_AZURE_CLIENT_ID` | Client id de la App Registration |
+| `VITE_AZURE_TENANT_ID` | Tenant id de Entra External ID |
+| `VITE_AZURE_API_CLIENT_ID` | Client id de la API (la misma App Registration) |
+| `VITE_AZURE_REDIRECT_URI` | `http://localhost:5173` (en producción, vacío) |
+| `VITE_API_BASE_URL` | `http://localhost:8080` (BFF local) o la URL del API Gateway |
+
+Si el backend no responde, el catálogo y las recetas muestran datos de ejemplo guardados en el navegador.
+
+## Publicar en AWS
+
+S3 + CloudFront (HTTPS): **[docs/DESPLIEGUE-FRONTEND.md](docs/DESPLIEGUE-FRONTEND.md)**.
+
+## Calidad
+
+```bash
+npm run lint
+npm run build
+```

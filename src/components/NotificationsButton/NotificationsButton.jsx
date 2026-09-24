@@ -15,7 +15,7 @@ const MAX_ITEMS = 15;
 export default function NotificationsButton() {
   const { user } = useAuth();
   const { recetas } = usePrescriptions();
-  const seenKey = `${SEEN_PREFIX}${(user?.email || '').toLowerCase()}`;
+  const seenKey = `${SEEN_PREFIX}${(user?.id || '').toLowerCase()}`;
   const [seenAt, setSeenAt] = useState(() => localStorage.getItem(seenKey) || '');
   const [highlightSince, setHighlightSince] = useState('');
   const [open, setOpen] = useState(false);

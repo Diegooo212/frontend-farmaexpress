@@ -122,6 +122,7 @@ export default function MyPrescriptions() {
           direccion: metodoDespacho === 'DESPACHO_DOMICILIO' ? direccion : undefined,
           comentarios,
           // Cuenta que envía la receta: así solo esta cuenta la ve y recibe sus avisos.
+          cuentaId: user?.id,
           cuentaEmail: user?.email,
           cuentaNombre: user?.nombre,
         },

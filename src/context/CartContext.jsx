@@ -8,12 +8,12 @@ const CART_PREFIX = 'farmaexpress_cart_';
 const SYNC_DELAY = 400;
 
 // Copia local del carrito de cada cuenta (respaldo si no hay conexión con el backend).
-const cartKey = (email) => `${CART_PREFIX}${email.toLowerCase()}`;
+const cartKey = (cuenta) => `${CART_PREFIX}${cuenta.toLowerCase()}`;
 
-function loadLocal(email) {
-  if (!email) return [];
+function loadLocal(cuenta) {
+  if (!cuenta) return [];
   try {
-    return JSON.parse(localStorage.getItem(cartKey(email))) || [];
+    return JSON.parse(localStorage.getItem(cartKey(cuenta))) || [];
   } catch {
     return [];
   }
@@ -30,7 +30,8 @@ localStorage.removeItem('farmaexpress_cart');
 export function CartProvider({ children }) {
   const { user } = useAuth();
   const { usingMock, purchaseMock, refresh } = useCatalog();
-  const owner = user?.email || null;
+  // Cada cuenta de Entra ID (oid) tiene su propio carrito.
+  const owner = user?.id || null;
   // Con backend, el carrito se guarda en el servidor por cuenta (mismo carrito en cualquier dispositivo).
   const remote = Boolean(owner) && !usingMock;
 

@@ -30,6 +30,8 @@ export const REJECTABLE = ['INGRESADA', 'VALIDADA'];
 // registrada, se asocian por nombre del paciente.
 export function isOwnReceta(receta, user) {
   if (!user) return false;
+  // Con backend, el dueño es el oid de Entra ID (cuentaId).
+  if (receta.cuentaId) return receta.cuentaId === user.id;
   if (receta.cuentaEmail) {
     return receta.cuentaEmail.toLowerCase() === (user.email || '').toLowerCase();
   }

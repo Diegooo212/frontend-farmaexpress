@@ -28,7 +28,7 @@ function saveStoredMock(data) {
 
 export function PrescriptionsProvider({ children }) {
   const { user } = useAuth();
-  const account = user?.email || null;
+  const account = user?.id || null;
   const [recetas, setRecetas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [usingMock, setUsingMock] = useState(false);
@@ -114,6 +114,7 @@ export function PrescriptionsProvider({ children }) {
 
     // La cuenta que envía la receta la toma el backend del token, no del formulario.
     const datos = { ...payload };
+    delete datos.cuentaId;
     delete datos.cuentaEmail;
     delete datos.cuentaNombre;
     const nueva = await apiCreate(datos, archivo);

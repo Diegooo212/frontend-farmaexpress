@@ -1,110 +1,85 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { InteractionStatus } from '@azure/msal-browser';
-import { loginRequest, registerRequest, getMe, loginMicrosoftRequest } from '../api/authApi';
-import { apiErrorMessage } from '../api/httpClient';
-import { getSession, saveSession, clearSession, SESSION_EXPIRED_EVENT } from '../api/session';
-import { loginRequest as msalLoginRequest, isAzureConfigured } from '../auth/msalConfig';
+import { getMe } from '../api/authApi';
+import { isAzureConfigured, loginRequest, signUpRequest } from '../auth/msalConfig';
+import { rolesDe } from '../utils/jwt';
 
 const AuthContext = createContext(null);
 
+// Ruta absoluta a la que MSAL debe volver después de pasar por Microsoft.
+const volverA = (to) => {
+  if (!to) return window.location.href;
+  const path = typeof to === 'string' ? to : `${to.pathname || '/'}${to.search || ''}${to.hash || ''}`;
+  return new URL(path, window.location.origin).href;
+};
+
 export function AuthContextProvider({ children }) {
   const { instance, accounts, inProgress } = useMsal();
-  const [session, setSession] = useState(() => getSession());
-  const [microsoftPending, setMicrosoftPending] = useState(false);
-  const [microsoftError, setMicrosoftError] = useState('');
-  const exchanging = useRef(false);
+  const account = instance.getActiveAccount() || accounts[0] || null;
+  const claims = account?.idTokenClaims || {};
+  const oid = claims.oid || account?.localAccountId || null;
 
-  const startSession = ({ token, expiraEn, usuario }) => {
-    const nueva = { token, expiraEn, usuario };
-    saveSession(nueva);
-    setSession(nueva);
-  };
+  // Perfil guardado en el BFF (se crea en el primer ingreso). Se asocia al oid para no mezclar cuentas.
+  const [perfil, setPerfil] = useState({ oid: null, datos: null });
 
-  // Si el backend rechaza el token (vencido o inválido), httpClient avisa y se cierra la sesión.
   useEffect(() => {
-    const handleExpired = () => setSession(null);
-    window.addEventListener(SESSION_EXPIRED_EVENT, handleExpired);
-    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, handleExpired);
-  }, []);
-
-  // Al abrir la app con una sesión guardada, se refrescan los datos de la cuenta (nombre, rol).
-  useEffect(() => {
-    if (!getSession()) return;
+    if (!oid || inProgress !== InteractionStatus.None) return;
+    let cancelled = false;
     getMe()
-      .then((usuario) => {
-        const current = getSession();
-        if (!current) return;
-        const updated = { ...current, usuario };
-        saveSession(updated);
-        setSession(updated);
+      .then((datos) => {
+        if (!cancelled) setPerfil({ oid, datos });
       })
       .catch(() => {
-        // Sin conexión se mantiene la sesión guardada; un 401 ya la cerró el interceptor.
+        // Sin backend se usan los datos del token; el guard y la UI siguen funcionando.
       });
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [oid, inProgress]);
 
-  // Vuelta desde Microsoft: MSAL ya tiene la cuenta. Se pide un access token para la API
-  // y el BFF lo cambia por un JWT de FarmaExpress (con el rol que viene de Entra ID).
-  useEffect(() => {
-    if (!isAzureConfigured || session || accounts.length === 0) return;
-    if (inProgress !== InteractionStatus.None || exchanging.current) return;
-    exchanging.current = true;
-    setMicrosoftPending(true);
-    setMicrosoftError('');
+  const datos = perfil.oid === oid ? perfil.datos : null;
+  const rolesToken = rolesDe(claims);
+  const email =
+    datos?.email || claims.email || (claims.preferred_username?.includes('@') ? claims.preferred_username : null) || null;
 
-    instance
-      .acquireTokenSilent({ ...msalLoginRequest, account: accounts[0] })
-      .then(({ accessToken }) => loginMicrosoftRequest(accessToken))
-      .then(startSession)
-      .catch((err) => {
-        setMicrosoftError(apiErrorMessage(err, 'No pudimos iniciar sesión con Microsoft.'));
-        // Se olvida la cuenta de Microsoft para que se pueda reintentar sin quedar en un bucle.
-        instance.clearCache().catch(() => {});
-      })
-      .finally(() => {
-        exchanging.current = false;
-        setMicrosoftPending(false);
-      });
-  }, [instance, accounts, inProgress, session]);
+  // Roles leídos del claim "roles" del token (App Roles). Sin rol asignado, la persona es Cliente.
+  const user = account
+    ? {
+        id: oid,
+        nombre: datos?.nombre || claims.name || account.name || email || 'Usuario',
+        email,
+        roles: rolesToken.length > 0 ? rolesToken : ['Cliente'],
+      }
+    : null;
 
-  const login = async ({ email, password }) => {
-    const respuesta = await loginRequest(email, password);
-    startSession(respuesta);
-    return respuesta.usuario;
-  };
-
-  // Redirige a Microsoft; al volver, el efecto de arriba completa el ingreso.
-  const loginWithMicrosoft = () => {
+  // OIDC Authorization Code + PKCE: MSAL redirige a la página del tenant y al volver canjea el código.
+  const login = (to) => {
     if (!isAzureConfigured) return;
-    setMicrosoftError('');
-    instance.loginRedirect(msalLoginRequest);
+    instance.loginRedirect({ ...loginRequest, redirectStartPage: volverA(to) });
   };
 
-  // Crea la cuenta (siempre como cliente). No inicia sesión: la pantalla lleva al login.
-  const register = ({ nombre, email, password }) => registerRequest({ nombre, email, password });
+  // Abre el user flow de registro del tenant (crear cuenta con correo y contraseña).
+  const register = (to) => {
+    if (!isAzureConfigured) return;
+    instance.loginRedirect({ ...signUpRequest, redirectStartPage: volverA(to) });
+  };
 
   const logout = () => {
-    clearSession();
-    setSession(null);
-    // También se olvida la cuenta de Microsoft en este navegador (sin salir de Microsoft en todos lados).
-    if (accounts.length > 0) instance.clearCache().catch(() => {});
+    instance.logoutRedirect({ account, postLogoutRedirectUri: window.location.origin });
   };
-
-  const user = session?.usuario || null;
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: Boolean(user),
+        isAuthenticated: Boolean(account),
+        // Mientras MSAL procesa la vuelta desde Microsoft, los guards esperan en vez de redirigir.
+        loading: inProgress !== InteractionStatus.None,
         login,
         register,
         logout,
-        loginWithMicrosoft,
         microsoftEnabled: isAzureConfigured,
-        microsoftPending,
-        microsoftError,
       }}
     >
       {children}
