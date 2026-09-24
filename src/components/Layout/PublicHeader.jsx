@@ -44,14 +44,6 @@ export default function PublicHeader() {
               Panel de farmacia
             </NavLink>
           )}
-          {isAuthenticated && (
-            <NavLink
-              to="/mi-cuenta"
-              className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
-            >
-              Mi cuenta
-            </NavLink>
-          )}
         </nav>
 
         <div className={styles.actions}>

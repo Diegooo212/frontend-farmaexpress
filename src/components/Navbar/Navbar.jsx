@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ClipboardList, Files, KeyRound, Pill, LogOut } from 'lucide-react';
+import { ClipboardList, Files, Pill, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import Logo from '../Logo/Logo';
@@ -8,7 +8,6 @@ import styles from './Navbar.module.css';
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Cola de trabajo', icon: ClipboardList },
   { to: '/recetas', label: 'Todas las recetas', icon: Files },
-  { to: '/mi-cuenta', label: 'Mi cuenta y token', icon: KeyRound },
 ];
 
 export default function Navbar() {

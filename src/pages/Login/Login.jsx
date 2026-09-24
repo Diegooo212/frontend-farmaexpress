@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { isSignUpEnabled } from '../../auth/msalConfig';
 import AuthLayout from '../../components/Layout/AuthLayout';
 import styles from '../../components/Layout/AuthForm.module.css';
 
@@ -23,7 +24,8 @@ export default function Login({ mode = 'login' }) {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || '/';
-  const esRegistro = mode === 'registro';
+  // Sin registro habilitado en el tenant, /registro se comporta como inicio de sesión.
+  const esRegistro = mode === 'registro' && isSignUpEnabled;
 
   useEffect(() => {
     if (isAuthenticated) navigate(from, { replace: true });
@@ -62,7 +64,9 @@ export default function Login({ mode = 'login' }) {
       </div>
 
       <p className={styles.footnote}>
-        {esRegistro ? (
+        {!isSignUpEnabled ? (
+          <>¿No tienes cuenta? Pídela al administrador de FarmaExpress.</>
+        ) : esRegistro ? (
           <>
             ¿Ya tienes cuenta? <Link to="/login" state={location.state}>Iniciar sesión</Link>
           </>

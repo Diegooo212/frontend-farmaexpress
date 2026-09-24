@@ -4,7 +4,6 @@ import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Prescriptions from './pages/Prescriptions/Prescriptions';
 import MyPrescriptions from './pages/MyPrescriptions/MyPrescriptions';
-import MyAccount from './pages/MyAccount/MyAccount';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Shell from './components/Layout/Shell';
 import PublicLayout from './components/Layout/PublicLayout';
@@ -27,17 +26,6 @@ export default function App() {
           <ProtectedRoute>
             <PublicLayout>
               <MyPrescriptions />
-            </PublicLayout>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/mi-cuenta"
-        element={
-          <ProtectedRoute>
-            <PublicLayout>
-              <MyAccount />
             </PublicLayout>
           </ProtectedRoute>
         }

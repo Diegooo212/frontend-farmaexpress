@@ -1,4 +1,11 @@
-# Configuración de Microsoft Entra External ID (IDaaS)
+# Configuración de Microsoft Entra ID (IDaaS)
+
+> **Estado actual:** el tenant `diegotenant` es de **fuerza de trabajo** (*Workforce*). Inician sesión las cuentas
+> creadas por el administrador, con sus App Roles (`Administrador`, `Operador`, `Cliente`). El frontend usa
+> `https://login.microsoftonline.com/<tenant>` y el botón "Crear cuenta" está oculto.
+> El **registro de cuentas nuevas** (secciones 1 y 3) requiere un tenant **External ID**; si se adopta, basta con
+> definir `VITE_AZURE_AUTHORITY=https://<tenant>.ciamlogin.com/<tenant>`, `VITE_AZURE_SIGNUP=true` en el frontend y
+> `AZURE_ISSUER` / `AZURE_JWKS_URI` con `ciamlogin.com` en el backend.
 
 FarmaExpress usa un **tenant externo de Microsoft Entra External ID** (CIAM).
 
@@ -69,7 +76,7 @@ Lo implementa MSAL (`@azure/msal-browser`) en `src/auth/msalConfig.js` y `src/co
 Para evidenciarlo en la demo:
 
 - **DevTools → Network:** el request a `authorize` muestra `code_challenge`, `code_challenge_method=S256`, `state` y `nonce`; el `POST /token` muestra `code_verifier`.
-- **Página "Mi cuenta":** muestra los claims del ID token y del access token (`iss`, `aud`, `scp`, `roles`, `exp`).
+- **Claims del access token:** F12 → Network → cualquier llamada a `/api/bff/...` → *Request Headers* → `Authorization: Bearer …`. Copia el token y pégalo en https://jwt.ms (decodificador oficial de Microsoft) para ver `iss`, `aud`, `scp`, `roles` y `exp`.
 
 ## 5. Variables del frontend (`.env`)
 

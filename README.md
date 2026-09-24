@@ -4,7 +4,7 @@ Frontend de **FarmaExpress**, plataforma de dispensación y retiro de recetas m�
 Curso DSY1107 Desarrollo Cloud Native I (DuocUC).
 
 - **React 19 + Vite**
-- **MSAL** (`@azure/msal-browser` / `@azure/msal-react`) con **Microsoft Entra External ID** como IDaaS
+- **MSAL** (`@azure/msal-browser` / `@azure/msal-react`) con **Microsoft Entra ID** como IDaaS
 - Consume el backend (microservicios Spring Boot) **a través de AWS API Gateway**
 
 Backend: repositorio `backend-farmaexpress`.
@@ -13,11 +13,11 @@ Backend: repositorio `backend-farmaexpress`.
 
 | Pieza | Archivo | Qué hace |
 |---|---|---|
-| Configuración MSAL | `src/auth/msalConfig.js` | Tenant `ciamlogin.com`, client id, redirect URI y scopes. Pide el scope de la API: `api://<client-id>/access_as_user`. |
-| Login / registro / logout | `src/context/AuthContext.jsx` | `loginRedirect` (**Authorization Code + PKCE**, con state y nonce validados por MSAL). `prompt=create` abre el registro del user flow. `logoutRedirect` cierra la sesión en Entra ID. |
+| Configuración MSAL | `src/auth/msalConfig.js` | Authority `login.microsoftonline.com/<tenant>`, client id, redirect URI y scopes. Pide el scope de la API: `api://<client-id>/access_as_user`. |
+| Login / registro / logout | `src/context/AuthContext.jsx` | `loginRedirect` (**Authorization Code + PKCE**, con state y nonce validados por MSAL). `logoutRedirect` cierra la sesión en Entra ID. |
 | Interceptor HTTP | `src/api/httpClient.js` | Pide el **access token** con `acquireTokenSilent` y lo envía en `Authorization: Bearer` a cada llamada. Si la sesión venció, vuelve a iniciar sesión. |
 | Guards | `src/components/ProtectedRoute` | Exigen sesión. El panel de farmacia además exige el rol `Operador` o `Administrador`, leído del claim **`roles`**. |
-| Claims | `src/pages/MyAccount` ("Mi cuenta") | Muestra `iss`, `aud`, `scp` (scopes), `roles` y `exp` del ID token y del access token. Permite copiar el token para probar la API. |
+| Claims | `src/context/AuthContext.jsx`, `src/utils/jwt.js` | Los roles se leen del claim `roles` del token. Para ver el token completo: F12 → Network → header `Authorization` → pegarlo en https://jwt.ms |
 
 Configuración del tenant, la App Registration, los roles y el user flow: **[docs/ENTRA-ID.md](docs/ENTRA-ID.md)**.
 
