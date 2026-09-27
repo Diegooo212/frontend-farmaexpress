@@ -47,11 +47,20 @@ export BUCKET=<bucket> DISTRIBUTION_ID=<id>
 bash deploy/publicar-cloudfront.sh
 ```
 
-## Si CloudFront no está disponible en tu lab
+## Si CloudFront no está disponible en tu lab (AWS Academy)
 
-Alternativa: **AWS Amplify Hosting**.
+En AWS Academy el rol `voclabs` no puede crear distribuciones CloudFront (`AccessDenied` en `CreateDistribution`).
+En ese caso se usa **AWS Amplify Hosting**, que también entrega HTTPS (`https://main.<id>.amplifyapp.com`):
 
-1. Ejecuta `npm run build` en tu PC, con `.env.production.local` que contenga `VITE_API_BASE_URL=<URL del API Gateway>` y `VITE_AZURE_REDIRECT_URI=` (vacío).
-2. Comprime la carpeta `dist`.
-3. En *Amplify → Deploy without Git*, sube el `.zip`.
-4. Amplify entrega un dominio HTTPS: úsalo en Entra ID y en el CORS del API Gateway.
+```bash
+cd frontend-farmaexpress && git pull
+export API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com
+export AZURE_TENANT_ID=<tenant id> AZURE_CLIENT_ID=<client id>
+bash deploy/publicar-amplify.sh
+```
+
+El script compila igual que el de CloudFront, crea la app de Amplify con una regla de SPA (las rutas de React
+responden `index.html`), sube el build como .zip y muestra la **URL** y el **APP_ID**.
+Para publicar una nueva versión: `export APP_ID=<id>` y vuelve a ejecutarlo.
+
+Después, igual que con CloudFront: Redirect URI SPA en Entra ID y CORS en API Gateway (`actualizar-cors.sh`) y en el BFF (`CORS_ORIGINS`).

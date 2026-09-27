@@ -43,7 +43,7 @@ ENV
 npm ci --no-audit --no-fund
 npm run build
 
-if ! aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null; then
+if ! aws s3api head-bucket --bucket "$BUCKET" >/dev/null 2>&1; then
   echo "==> Creando bucket privado $BUCKET"
   if [ "$REGION" = "us-east-1" ]; then
     aws s3api create-bucket --bucket "$BUCKET" >/dev/null
