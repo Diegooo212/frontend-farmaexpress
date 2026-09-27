@@ -26,7 +26,7 @@ El script:
 3. Crea un bucket **privado** y sube el build.
 4. Crea la distribución CloudFront:
    - HTTPS obligatorio;
-   - acceso al bucket solo vía **OAC**;
+   - acceso al bucket: prueba **OAC** (bucket privado); si el rol del lab no lo permite, **OAI**; y si tampoco, usa el bucket como **sitio web estático** (solo lectura pública de los archivos del build) con CloudFront delante para el HTTPS. En AWS Academy (rol `voclabs`) OAC está bloqueado;
    - errores 403/404 → `index.html`, para que funcionen las rutas de React como `/mis-recetas`.
 5. Muestra la URL, `BUCKET` y `DISTRIBUTION_ID` (anótalos).
 

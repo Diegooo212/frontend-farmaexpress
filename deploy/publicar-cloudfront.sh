@@ -58,23 +58,62 @@ aws s3 sync dist "s3://$BUCKET" --delete --exclude index.html --cache-control "p
 aws s3 cp dist/index.html "s3://$BUCKET/index.html" --cache-control "no-cache"
 
 if [ -z "${DISTRIBUTION_ID:-}" ]; then
-  echo "==> Creando distribución CloudFront (HTTPS) con acceso privado al bucket (OAC)"
-  OAC_ID=$(aws cloudfront create-origin-access-control --origin-access-control-config \
-    "Name=farmaexpress-oac-$(date +%s),SigningProtocol=sigv4,SigningBehavior=always,OriginAccessControlOriginType=s3" \
-    --query OriginAccessControl.Id --output text)
+  # Acceso de CloudFront al bucket. Se prueba de más a menos restrictivo, porque AWS Academy
+  # (rol voclabs) suele bloquear OAC y a veces OAI:
+  #   1) OAC: bucket privado, solo CloudFront lo lee (recomendado por AWS).
+  #   2) OAI: igual, con el mecanismo anterior.
+  #   3) Sitio web estático de S3 (lectura pública) con CloudFront delante para el HTTPS.
+  MODO=""
+  ORIGEN_S3="$BUCKET.s3.$REGION.amazonaws.com"
+  if OAC_ID=$(aws cloudfront create-origin-access-control --origin-access-control-config \
+      "Name=farmaexpress-oac-$(date +%s),SigningProtocol=sigv4,SigningBehavior=always,OriginAccessControlOriginType=s3" \
+      --query OriginAccessControl.Id --output text 2>/dev/null); then
+    MODO=oac
+    ORIGEN="{ \"Id\": \"s3-frontend\", \"DomainName\": \"$ORIGEN_S3\", \"OriginAccessControlId\": \"$OAC_ID\", \"S3OriginConfig\": { \"OriginAccessIdentity\": \"\" } }"
+  elif read -r OAI_ID OAI_CANONICO < <(aws cloudfront create-cloud-front-origin-access-identity \
+      --cloud-front-origin-access-identity-config "CallerReference=farmaexpress-oai-$(date +%s),Comment=FarmaExpress" \
+      --query 'CloudFrontOriginAccessIdentity.[Id,S3CanonicalUserId]' --output text 2>/dev/null) && [ -n "${OAI_ID:-}" ]; then
+    MODO=oai
+    ORIGEN="{ \"Id\": \"s3-frontend\", \"DomainName\": \"$ORIGEN_S3\", \"S3OriginConfig\": { \"OriginAccessIdentity\": \"origin-access-identity/cloudfront/$OAI_ID\" } }"
+  else
+    MODO=website
+    if [ "$REGION" = "us-east-1" ]; then
+      ORIGEN_WEB="$BUCKET.s3-website-us-east-1.amazonaws.com"
+    else
+      ORIGEN_WEB="$BUCKET.s3-website.$REGION.amazonaws.com"
+    fi
+    ORIGEN="{ \"Id\": \"s3-frontend\", \"DomainName\": \"$ORIGEN_WEB\", \"CustomOriginConfig\": { \"HTTPPort\": 80, \"HTTPSPort\": 443, \"OriginProtocolPolicy\": \"http-only\" } }"
+  fi
+  echo "==> Acceso de CloudFront al bucket: $MODO"
 
+  if [ "$MODO" = "website" ]; then
+    echo "==> Sin permisos para OAC/OAI: bucket como sitio web estático (solo lectura pública del build)"
+    aws s3api put-public-access-block --bucket "$BUCKET" --public-access-block-configuration \
+      "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+    aws s3 website "s3://$BUCKET" --index-document index.html --error-document index.html
+    cat > /tmp/politica.json <<JSON
+{
+  "Version": "2012-10-17",
+  "Statement": [ {
+    "Sid": "LecturaPublicaDelSitio",
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::$BUCKET/*"
+  } ]
+}
+JSON
+    aws s3api put-bucket-policy --bucket "$BUCKET" --policy file:///tmp/politica.json
+  fi
+
+  echo "==> Creando distribución CloudFront (HTTPS)"
   cat > /tmp/distribucion.json <<JSON
 {
   "CallerReference": "farmaexpress-$(date +%s)",
   "Comment": "FarmaExpress frontend",
   "Enabled": true,
   "DefaultRootObject": "index.html",
-  "Origins": { "Quantity": 1, "Items": [ {
-    "Id": "s3-frontend",
-    "DomainName": "$BUCKET.s3.$REGION.amazonaws.com",
-    "OriginAccessControlId": "$OAC_ID",
-    "S3OriginConfig": { "OriginAccessIdentity": "" }
-  } ] },
+  "Origins": { "Quantity": 1, "Items": [ $ORIGEN ] },
   "DefaultCacheBehavior": {
     "TargetOriginId": "s3-frontend",
     "ViewerProtocolPolicy": "redirect-to-https",
@@ -93,21 +132,29 @@ JSON
     --distribution-config file:///tmp/distribucion.json \
     --query 'Distribution.[Id,DomainName]' --output text)
 
-  echo "==> Permitiendo que solo CloudFront lea el bucket"
-  cat > /tmp/politica.json <<JSON
+  if [ "$MODO" = "oac" ]; then
+    PRINCIPAL='{ "Service": "cloudfront.amazonaws.com" }'
+    CONDICION=", \"Condition\": { \"StringEquals\": { \"AWS:SourceArn\": \"arn:aws:cloudfront::$ACCOUNT_ID:distribution/$DISTRIBUTION_ID\" } }"
+  elif [ "$MODO" = "oai" ]; then
+    PRINCIPAL="{ \"CanonicalUser\": \"$OAI_CANONICO\" }"
+    CONDICION=""
+  fi
+  if [ "$MODO" != "website" ]; then
+    echo "==> Permitiendo que solo CloudFront lea el bucket"
+    cat > /tmp/politica.json <<JSON
 {
   "Version": "2012-10-17",
   "Statement": [ {
     "Sid": "SoloCloudFront",
     "Effect": "Allow",
-    "Principal": { "Service": "cloudfront.amazonaws.com" },
+    "Principal": $PRINCIPAL,
     "Action": "s3:GetObject",
-    "Resource": "arn:aws:s3:::$BUCKET/*",
-    "Condition": { "StringEquals": { "AWS:SourceArn": "arn:aws:cloudfront::$ACCOUNT_ID:distribution/$DISTRIBUTION_ID" } }
+    "Resource": "arn:aws:s3:::$BUCKET/*"$CONDICION
   } ]
 }
 JSON
-  aws s3api put-bucket-policy --bucket "$BUCKET" --policy file:///tmp/politica.json
+    aws s3api put-bucket-policy --bucket "$BUCKET" --policy file:///tmp/politica.json
+  fi
 else
   echo "==> Invalidando caché de CloudFront"
   aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/index.html" "/" >/dev/null
