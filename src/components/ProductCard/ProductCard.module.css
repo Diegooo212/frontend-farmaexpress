@@ -117,3 +117,31 @@
   display: flex;
   gap: 0.4rem;
 }
+
+/* En celular las tarjetas son angostas: el texto del botón puede bajar de línea en vez de desbordar. */
+.card > :global(.btn) {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+.adminActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.fila {
+  flex-basis: 100%;
+}
+
+.confirmar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  font-size: var(--text-sm);
+}

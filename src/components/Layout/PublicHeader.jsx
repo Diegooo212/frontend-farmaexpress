@@ -25,9 +25,12 @@ export default function PublicHeader() {
         <Logo />
 
         <nav className={styles.nav} aria-label="Principal">
-          <Link to="/#catalogo" className={styles.link}>
+          <NavLink
+            to="/catalogo"
+            className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
+          >
             Catálogo
-          </Link>
+          </NavLink>
           <Link to="/#recetas" className={styles.link}>
             Cómo funcionan las recetas
           </Link>

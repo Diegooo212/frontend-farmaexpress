@@ -8,7 +8,6 @@ import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import StatusTrack from '../../components/StatusTrack/StatusTrack';
 import { formatDate } from '../../utils/format';
 import { isOwnReceta, lastNote } from '../../utils/prescriptionStatus';
-import CatalogSection from './CatalogSection';
 import styles from './Home.module.css';
 
 const SHELF_SHAPES = ['tall', 'standard', 'tall'];
@@ -38,7 +37,7 @@ export default function Home() {
   const { recetas } = usePrescriptions();
   const location = useLocation();
 
-  // Los enlaces del header apuntan a /#catalogo y /#recetas: al cambiar el hash, bajamos a la sección.
+  // El enlace del header "Cómo funcionan las recetas" apunta a /#recetas: al cambiar el hash, bajamos a la sección.
   useEffect(() => {
     if (!location.hash) return;
     document.getElementById(location.hash.slice(1))?.scrollIntoView();
@@ -68,7 +67,7 @@ export default function Home() {
             en tu farmacia más cercana.
           </p>
           <div className={styles.heroActions}>
-            <Link to="/#catalogo" className="btn btn-primary">
+            <Link to="/catalogo" className="btn btn-primary">
               Ver catálogo
             </Link>
             <Link to={isAuthenticated ? '/mis-recetas' : '/login'} className="btn btn-outline">
@@ -92,8 +91,6 @@ export default function Home() {
           <div className={styles.plank} />
         </div>
       </section>
-
-      <CatalogSection />
 
       <section id="recetas" className={styles.recipes} aria-labelledby="recetas-title">
         <div className={styles.recipesIntro}>

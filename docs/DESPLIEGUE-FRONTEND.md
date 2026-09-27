@@ -15,13 +15,14 @@ En **AWS CloudShell** (Learner Lab, región us-east-1):
 git clone https://github.com/<tu-usuario>/frontend-farmaexpress.git
 cd frontend-farmaexpress
 export API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com
+export AZURE_TENANT_ID=<tenant id> AZURE_CLIENT_ID=<client id>   # los de tu .env
 bash deploy/publicar-cloudfront.sh
 ```
 
 El script:
 
 1. Instala Node 22 si CloudShell trae una versión antigua.
-2. Compila con `VITE_API_BASE_URL=$API_URL`. La Redirect URI queda como el propio dominio de CloudFront.
+2. Compila con `VITE_API_BASE_URL=$API_URL` y los IDs de Entra ID (el `.env` no está en el repo). La Redirect URI queda como el propio dominio de CloudFront.
 3. Crea un bucket **privado** y sube el build.
 4. Crea la distribución CloudFront:
    - HTTPS obligatorio;
@@ -41,6 +42,7 @@ CloudFront tarda unos 5 minutos en quedar disponible la primera vez.
 ```bash
 cd frontend-farmaexpress && git pull
 export API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com
+export AZURE_TENANT_ID=<tenant id> AZURE_CLIENT_ID=<client id>   # los de tu .env
 export BUCKET=<bucket> DISTRIBUTION_ID=<id>
 bash deploy/publicar-cloudfront.sh
 ```

@@ -3,6 +3,7 @@
 # Se ejecuta en AWS CloudShell, dentro de la carpeta del repo clonado:
 #   git clone https://github.com/<tu-usuario>/frontend-farmaexpress.git && cd frontend-farmaexpress
 #   export API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com
+#   export AZURE_TENANT_ID=<tenant id> AZURE_CLIENT_ID=<client id>
 #   bash deploy/publicar-cloudfront.sh
 #
 # La primera vez crea el bucket y la distribución. Las siguientes veces, con
@@ -12,6 +13,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 : "${API_URL:?Define API_URL con la URL del API Gateway}"
+# El .env no está en el repo: los IDs de Entra ID (no son secretos) se pasan como variables.
+: "${AZURE_TENANT_ID:?Define AZURE_TENANT_ID (Entra ID → Overview → Tenant ID)}"
+: "${AZURE_CLIENT_ID:?Define AZURE_CLIENT_ID (App Registration → Application (client) ID)}"
+AZURE_API_CLIENT_ID=${AZURE_API_CLIENT_ID:-$AZURE_CLIENT_ID}
 REGION=$(aws configure get region || echo "${AWS_REGION:-us-east-1}")
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 BUCKET=${BUCKET:-farmaexpress-frontend-$ACCOUNT_ID}
@@ -30,6 +35,9 @@ echo "==> Build de producción apuntando a $API_URL"
 # redirect_uri vacío = el propio dominio de CloudFront (window.location.origin).
 cat > .env.production.local <<ENV
 VITE_API_BASE_URL=$API_URL
+VITE_AZURE_CLIENT_ID=$AZURE_CLIENT_ID
+VITE_AZURE_TENANT_ID=$AZURE_TENANT_ID
+VITE_AZURE_API_CLIENT_ID=$AZURE_API_CLIENT_ID
 VITE_AZURE_REDIRECT_URI=
 ENV
 npm ci --no-audit --no-fund

@@ -7,7 +7,8 @@ import { apiErrorMessage } from '../../api/httpClient';
 import Modal from '../../components/Modal/Modal';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import ProductDetailModal from '../../components/ProductDetailModal/ProductDetailModal';
-import styles from './CatalogSection.module.css';
+import Pagination from '../../components/Pagination/Pagination';
+import styles from './Catalog.module.css';
 
 const SORTERS = {
   relevancia: null,
@@ -16,12 +17,15 @@ const SORTERS = {
   nombre: (a, b) => a.nombre.localeCompare(b.nombre, 'es'),
 };
 
+// Productos por página: 24 llena filas completas con 2, 3 o 4 columnas.
+const POR_PAGINA = 24;
+
 const EMPTY_FORM = { nombre: '', sku: '', precio: '', stock: '' };
 
-export default function CatalogSection() {
+export default function Catalog() {
   const { user } = useAuth();
   const isAdmin = (user?.roles || []).includes('Admin');
-  const { medicamentos, loading, createMedicamento, updateMedicamento } = useCatalog();
+  const { medicamentos, loading, createMedicamento, updateMedicamento, deleteMedicamento } = useCatalog();
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 300);
@@ -49,6 +53,25 @@ export default function CatalogSection() {
     });
     return SORTERS[sort] ? [...result].sort(SORTERS[sort]) : result;
   }, [medicamentos, debouncedSearch, minPrice, maxPrice, onlyAvailable, sort]);
+
+  // Paginación: al buscar, filtrar u ordenar se vuelve a la primera página.
+  const [pagina, setPagina] = useState(1);
+  const claveFiltros = `${debouncedSearch}|${minPrice}|${maxPrice}|${onlyAvailable}|${sort}`;
+  const [claveAnterior, setClaveAnterior] = useState(claveFiltros);
+  if (claveAnterior !== claveFiltros) {
+    setClaveAnterior(claveFiltros);
+    setPagina(1);
+  }
+  const totalPaginas = Math.max(1, Math.ceil(filtered.length / POR_PAGINA));
+  // Si el catálogo se achica (p. ej. al filtrar), la página no puede quedar fuera de rango.
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const desde = (paginaActual - 1) * POR_PAGINA;
+  const visibles = filtered.slice(desde, desde + POR_PAGINA);
+
+  const irAPagina = (numero) => {
+    setPagina(numero);
+    document.getElementById('catalogo')?.scrollIntoView();
+  };
 
   const hasFilters = search || minPrice || maxPrice || onlyAvailable;
 
@@ -80,9 +103,9 @@ export default function CatalogSection() {
     <section id="catalogo" className={styles.section} aria-labelledby="catalogo-title">
       <div className={styles.head}>
         <div>
-          <h2 id="catalogo-title" className={styles.title}>
+          <h1 id="catalogo-title" className={styles.title}>
             Catálogo
-          </h2>
+          </h1>
           <p className={styles.lead}>
             {loading
               ? 'Cargando medicamentos…'
@@ -173,17 +196,32 @@ export default function CatalogSection() {
           )}
         </div>
       ) : (
-        <div className={styles.grid}>
-          {filtered.map((medicamento) => (
-            <ProductCard
-              key={medicamento.id}
-              medicamento={medicamento}
-              isAdmin={isAdmin}
-              onSave={updateMedicamento}
-              onViewDetail={(m) => setSelectedId(m.id)}
+        <>
+          <div className={styles.grid}>
+            {visibles.map((medicamento) => (
+              <ProductCard
+                key={medicamento.id}
+                medicamento={medicamento}
+                isAdmin={isAdmin}
+                onSave={updateMedicamento}
+                onDelete={deleteMedicamento}
+                onViewDetail={(m) => setSelectedId(m.id)}
+              />
+            ))}
+          </div>
+
+          <div className={styles.paginacion}>
+            <p className={styles.rango} aria-live="polite">
+              Mostrando {desde + 1}–{desde + visibles.length} de {filtered.length} medicamentos
+            </p>
+            <Pagination
+              pagina={paginaActual}
+              totalPaginas={totalPaginas}
+              onCambiar={irAPagina}
+              etiqueta="Páginas del catálogo"
             />
-          ))}
-        </div>
+          </div>
+        </>
       )}
 
       <ProductDetailModal

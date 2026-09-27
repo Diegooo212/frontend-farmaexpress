@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Minus, Plus, Pencil } from 'lucide-react';
+import { Minus, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { formatCLP } from '../../utils/format';
 import { apiErrorMessage } from '../../api/httpClient';
@@ -8,12 +8,14 @@ import { getStockLevel, stockLabel } from '../../utils/stock';
 import MedBox from '../MedBox/MedBox';
 import styles from './ProductCard.module.css';
 
-export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail }) {
+export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, onViewDetail }) {
   const { addItem, updateQty, items, canUseCart } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [precio, setPrecio] = useState(medicamento.precio);
   const [stock, setStock] = useState(medicamento.stock);
   const [saveError, setSaveError] = useState('');
+  const [confirmando, setConfirmando] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
 
   const level = getStockLevel(medicamento.stock);
   const cartQty = items.find((i) => i.id === medicamento.id)?.cantidad || 0;
@@ -27,6 +29,19 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
       setIsEditing(false);
     } catch (err) {
       setSaveError(apiErrorMessage(err, 'No se pudieron guardar los cambios.'));
+    }
+  };
+
+  const handleDelete = async () => {
+    setEliminando(true);
+    setSaveError('');
+    try {
+      await onDelete(medicamento.id);
+      // Al recargar el catálogo la tarjeta desaparece.
+    } catch (err) {
+      setSaveError(apiErrorMessage(err, 'No se pudo eliminar el medicamento.'));
+      setEliminando(false);
+      setConfirmando(false);
     }
   };
 
@@ -94,12 +109,36 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onViewDetail
             </div>
           </form>
         ) : (
-          <button className="btn btn-outline btn-sm" onClick={() => setIsEditing(true)}>
-            <Pencil size={15} /> Editar precio y stock
-          </button>
+          confirmando ? (
+            <div className={styles.confirmar} role="alert">
+              <p>¿Eliminar {medicamento.nombre} del catálogo? Esta acción no se puede deshacer.</p>
+              <div className={styles.editActions}>
+                <button type="button" className="btn btn-danger btn-sm" onClick={handleDelete} disabled={eliminando}>
+                  {eliminando ? 'Eliminando…' : 'Sí, eliminar'}
+                </button>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirmando(false)} disabled={eliminando}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.adminActions}>
+              <button className="btn btn-outline btn-sm" onClick={() => setIsEditing(true)}>
+                <Pencil size={15} /> Editar
+              </button>
+              <button className="btn btn-danger btn-sm" onClick={() => setConfirmando(true)}>
+                <Trash2 size={15} /> Eliminar
+              </button>
+              {saveError && (
+                <p className={`alert alert-error ${styles.fila}`} role="alert">
+                  {saveError}
+                </p>
+              )}
+            </div>
+          )
         )
       ) : !canUseCart && level !== 'out' ? (
-        <Link to="/login" state={{ from: { pathname: '/', hash: '#catalogo' } }} className="btn btn-outline btn-sm">
+        <Link to="/login" state={{ from: '/catalogo' }} className="btn btn-outline btn-sm">
           Inicia sesión para comprar
         </Link>
       ) : cartQty > 0 ? (

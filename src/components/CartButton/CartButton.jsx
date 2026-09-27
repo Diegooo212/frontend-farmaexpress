@@ -82,7 +82,7 @@ export default function CartButton() {
         {!success && items.length === 0 && (
           <div className={styles.empty}>
             <p>Tu carrito está vacío.</p>
-            <Link to="/#catalogo" className="btn btn-outline btn-sm" onClick={handleClose}>
+            <Link to="/catalogo" className="btn btn-outline btn-sm" onClick={handleClose}>
               Ver catálogo
             </Link>
           </div>

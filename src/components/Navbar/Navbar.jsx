@@ -39,7 +39,7 @@ export default function Navbar() {
             {label}
           </NavLink>
         ))}
-        <Link to="/#catalogo" className={styles.link}>
+        <Link to="/catalogo" className={styles.link}>
           <Pill size={19} aria-hidden="true" />
           Catálogo
         </Link>

@@ -55,7 +55,7 @@ export default function ProductDetailModal({ medicamento, isOpen, onClose }) {
           </dl>
 
           {!canUseCart && !isOutOfStock && (
-            <Link to="/login" state={{ from: { pathname: '/', hash: '#catalogo' } }} className="btn btn-primary">
+            <Link to="/login" state={{ from: '/catalogo' }} className="btn btn-primary">
               Inicia sesión para comprar
             </Link>
           )}

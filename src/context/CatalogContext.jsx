@@ -3,6 +3,7 @@ import {
   getMedicamentos,
   createMedicamento as apiCreate,
   updateMedicamento as apiUpdate,
+  deleteMedicamento as apiDelete,
 } from '../api/catalogApi';
 import { isNetworkError } from '../api/httpClient';
 import { CATALOG_MOCK } from '../mocks/catalogMock';
@@ -85,6 +86,15 @@ export function CatalogProvider({ children }) {
     await load();
   };
 
+  const deleteMedicamento = async (id) => {
+    if (usingMock) {
+      updateMockState((prev) => prev.filter((m) => m.id !== id));
+      return;
+    }
+    await apiDelete(id);
+    await load();
+  };
+
   // Solo para el modo sin backend: con backend, la compra la hace el BFF (POST /orders).
   const purchaseMock = (items) => {
     updateMockState((prev) =>
@@ -105,6 +115,7 @@ export function CatalogProvider({ children }) {
         error,
         createMedicamento,
         updateMedicamento,
+        deleteMedicamento,
         purchaseMock,
         refresh: load,
       }}
