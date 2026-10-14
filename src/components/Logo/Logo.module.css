@@ -16,6 +16,11 @@
   width: 34px;
   height: 17px;
   transform: rotate(-24deg);
+  transition: transform 0.5s var(--ease-spring);
+}
+
+.logo:hover .mark {
+  transform: rotate(156deg);
 }
 
 .shell {

@@ -3,7 +3,9 @@
 # Se ejecuta en AWS CloudShell, dentro de la carpeta del repo clonado:
 #   git clone https://github.com/<tu-usuario>/frontend-farmaexpress.git && cd frontend-farmaexpress
 #   export API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com
-#   export AZURE_TENANT_ID=<tenant id> AZURE_CLIENT_ID=<client id>
+#   export AZURE_TENANT_ID=<tenant id>
+#   export AZURE_CLIENT_ID=<client id de la app del FRONTEND (FarmaExpress Web)>
+#   export AZURE_API_CLIENT_ID=<client id de la app de la API (FarmaExpress API)>
 #   bash deploy/publicar-cloudfront.sh
 #
 # La primera vez crea el bucket y la distribución. Las siguientes veces, con
@@ -15,8 +17,8 @@ cd "$(dirname "$0")/.."
 : "${API_URL:?Define API_URL con la URL del API Gateway}"
 # El .env no está en el repo: los IDs de Entra ID (no son secretos) se pasan como variables.
 : "${AZURE_TENANT_ID:?Define AZURE_TENANT_ID (Entra ID → Overview → Tenant ID)}"
-: "${AZURE_CLIENT_ID:?Define AZURE_CLIENT_ID (App Registration → Application (client) ID)}"
-AZURE_API_CLIENT_ID=${AZURE_API_CLIENT_ID:-$AZURE_CLIENT_ID}
+: "${AZURE_CLIENT_ID:?Define AZURE_CLIENT_ID (app del frontend: FarmaExpress Web → Application (client) ID)}"
+: "${AZURE_API_CLIENT_ID:?Define AZURE_API_CLIENT_ID (app de la API: FarmaExpress API → Application (client) ID)}"
 REGION=$(aws configure get region || echo "${AWS_REGION:-us-east-1}")
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 BUCKET=${BUCKET:-farmaexpress-frontend-$ACCOUNT_ID}

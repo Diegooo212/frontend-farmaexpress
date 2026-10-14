@@ -7,6 +7,15 @@
 .content {
   flex: 1;
   width: 100%;
+  animation: entrarPagina 0.55s var(--ease-out);
+}
+
+@keyframes entrarPagina {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(18px) scale(0.99);
+  }
 }
 
 .footer {
@@ -17,7 +26,7 @@
 
 .footerInner {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.4fr;
+  grid-template-columns: 1.4fr 1.3fr 1fr 1.1fr;
   gap: 2.5rem;
   max-width: var(--page-width);
   margin: 0 auto;
@@ -52,7 +61,82 @@
   margin-top: 0.3rem;
 }
 
-@media (max-width: 760px) {
+.footerList a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footerList a:hover {
+  color: var(--color-on-ink);
+  text-decoration: underline;
+}
+
+.contacto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: color-mix(in srgb, var(--color-on-ink) 85%, transparent);
+}
+
+.contacto li,
+.farmacia {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.contacto svg,
+.farmacia svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.farmacia span {
+  display: flex;
+  flex-direction: column;
+}
+
+.farmacia strong {
+  color: var(--color-on-ink);
+  font-size: var(--text-sm);
+}
+
+.farmacia small {
+  font-size: 0.8rem;
+}
+
+.footerList li.farmacia + li.farmacia {
+  margin-top: 0.7rem;
+}
+
+.pagos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.legal {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 1.25rem var(--gutter) 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-on-ink) 18%, transparent);
+  color: color-mix(in srgb, var(--color-on-ink) 60%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 1000px) {
+  .footerInner {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
   .footerInner {
     grid-template-columns: 1fr;
     gap: 2rem;

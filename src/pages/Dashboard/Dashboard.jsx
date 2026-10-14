@@ -7,6 +7,7 @@ import PrescriptionDetailDrawer from '../../components/PrescriptionDetailDrawer/
 import { NEXT_STATUS } from '../../utils/prescriptionStatus';
 import { formatDate } from '../../utils/format';
 import styles from './Dashboard.module.css';
+import Skeleton from '../../components/Skeleton/Skeleton';
 
 const COLUMNS = [
   { status: 'INGRESADA', title: 'Por validar', empty: 'No hay recetas esperando validación.' },
@@ -36,7 +37,7 @@ export default function Dashboard() {
   };
 
   if (loading) {
-    return <p className={styles.state}>Cargando la cola de trabajo…</p>;
+    return <Skeleton filas={4} alto={110} columnas={2} etiqueta="Cargando la cola de trabajo…" />;
   }
 
   const pendientes = recetas.filter((r) => r.status === 'INGRESADA').length;

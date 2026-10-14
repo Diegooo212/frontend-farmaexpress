@@ -1,0 +1,295 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lead,
+.muted {
+  max-width: 70ch;
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.1rem 1.2rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.kpi:disabled {
+  cursor: default;
+}
+
+.kpi svg {
+  margin-bottom: 0.3rem;
+}
+
+.kpiValor {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.kpiEtiqueta {
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.kpiDetalle {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.kpiActivo {
+  border-color: currentColor;
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.primary svg {
+  color: var(--color-primary);
+}
+
+.warning svg,
+.warning .kpiValor {
+  color: var(--color-warning);
+}
+
+.danger svg,
+.danger .kpiValor {
+  color: var(--color-danger);
+}
+
+.muted svg {
+  color: var(--color-text-muted);
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: minmax(170px, 220px) minmax(200px, 280px) 1fr;
+  align-items: end;
+  gap: 1rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chipActivo {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.tablaWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.tabla {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.tabla th {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.tabla td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.filaVencida {
+  background: color-mix(in srgb, var(--color-danger-soft) 45%, transparent);
+}
+
+.producto {
+  font-weight: 700;
+}
+
+.mono {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+}
+
+.num {
+  text-align: right !important;
+}
+
+.dias {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.estado {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.estado_VIGENTE {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.estado_POR_VENCER {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.estado_VENCIDO {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.estado_AGOTADO {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.vacio {
+  padding: 2rem !important;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formFila {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+}
+
+.movimientos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.movimientos li {
+  display: grid;
+  grid-template-columns: 90px 60px 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.movTipo {
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.movCantidad {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-align: right;
+}
+
+.movDetalle {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-sm);
+}
+
+.movDetalle small {
+  color: var(--color-text-muted);
+}
+
+.mov_INGRESO .movCantidad,
+.mov_LIBERACION .movCantidad {
+  color: var(--color-success);
+}
+
+.mov_MERMA .movCantidad {
+  color: var(--color-danger);
+}
+
+
+@media (max-width: 900px) {
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .chips {
+    grid-column: 1 / -1;
+  }
+}

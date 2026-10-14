@@ -224,3 +224,128 @@
     display: none;
   }
 }
+
+/* ---------- Beneficios ---------- */
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  max-width: var(--page-width);
+  margin: 4rem auto 0;
+  padding: 0 var(--gutter);
+  list-style: none;
+}
+
+.beneficios li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.beneficios svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.beneficios div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.beneficios div > span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Secciones de tienda ---------- */
+.seccion {
+  max-width: var(--page-width);
+  margin: 5rem auto 0;
+  padding: 0 var(--gutter);
+}
+
+.seccionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.verTodo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.verTodo:hover {
+  text-decoration: underline;
+}
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: 1rem;
+}
+
+.categoria {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.2rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.categoria:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.categoria small {
+  color: var(--color-text-muted);
+}
+
+.categoriaIcono {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 0.3rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 2.5rem 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .categoria {
+    transition: none;
+  }
+
+  .categoria:hover {
+    transform: none;
+  }
+}
+

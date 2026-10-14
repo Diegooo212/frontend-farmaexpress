@@ -1,0 +1,347 @@
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 4rem;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--color-primary);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.estado {
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
+
+.success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.info {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.estado.muted {
+  background: var(--color-surface-2);
+}
+
+/* Seguimiento: una línea con los pasos, como el tracking de las tiendas. */
+.seguimiento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0 0 2rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  list-style: none;
+}
+
+.paso {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.5rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.paso:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 17px;
+  right: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--color-border);
+  z-index: 0;
+}
+
+/* Tramo completado: se dibuja encima de la línea gris, de izquierda a derecha y en orden */
+.pasoHecho:not(:first-child)::after {
+  content: '';
+  position: absolute;
+  top: 17px;
+  right: 50%;
+  z-index: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gradient-primary);
+  transform-origin: left;
+  animation: llenarTramo 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 0.35s - 0.2s);
+}
+
+@keyframes llenarTramo {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Cada punto aparece con un pequeño salto cuando la línea llega a él */
+.pasoHecho .punto {
+  animation: aparecerPunto 0.45s var(--ease-spring) both;
+  animation-delay: calc(var(--i) * 0.35s);
+}
+
+@keyframes aparecerPunto {
+  from {
+    transform: scale(0.3);
+    opacity: 0.3;
+  }
+}
+
+/* El paso actual late suavemente */
+.pasoActual .punto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  animation: latirPaso 1.8s ease-out infinite;
+  animation-delay: calc(var(--i) * 0.35s + 0.4s);
+}
+
+@keyframes latirPaso {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+.punto {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+  font-weight: 800;
+}
+
+.pasoHecho .punto {
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-glow);
+  color: var(--color-on-primary);
+}
+
+.pasoActual .punto {
+  box-shadow: 0 0 0 5px var(--color-primary-soft);
+}
+
+.pasoActual .pasoTitulo {
+  color: var(--color-primary);
+}
+
+.pasoTitulo {
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.pasoHecho .pasoTitulo {
+  color: var(--color-text);
+}
+
+.paso small {
+  font-size: 0.75rem;
+}
+
+.pendiente {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.pendiente svg {
+  vertical-align: -3px;
+}
+
+.botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.bloque h2 {
+  font-size: var(--text-lg);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.itemNombre {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-weight: 700;
+}
+
+.itemNombre small {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.totales {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.totales div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totales dt {
+  color: var(--color-text-muted);
+}
+
+.totales dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.total {
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--color-border);
+  font-size: var(--text-lg);
+}
+
+.total dt {
+  color: var(--color-text) !important;
+  font-weight: 800;
+}
+
+.dato {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.dato svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
+.dato small {
+  color: var(--color-text-muted);
+}
+
+.nota {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: var(--color-success-soft);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 820px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seguimiento {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .paso {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .paso:not(:first-child)::before,
+  .paso:not(:first-child)::after {
+    display: none;
+  }
+}

@@ -1,0 +1,175 @@
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 4rem;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.acciones {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+/* La "hoja" se ve igual en pantalla y en papel: fondo blanco y texto oscuro aun en modo oscuro. */
+.hoja {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid #d5daea;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  color: #1a1d3a;
+  /* Paleta clara fija (también en modo oscuro), para el logo y cualquier componente dentro de la hoja. */
+  --color-text: #1a1d3a;
+  --color-text-muted: #585f80;
+  --color-primary: #2b45e0;
+  --color-ink: #1a1d3a;
+  --color-on-ink: #f4f6fb;
+  --color-bg: #fff;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #1a1d3a;
+}
+
+.documento {
+  text-align: right;
+}
+
+.documento h1 {
+  font-size: 1.4rem;
+}
+
+.documento small {
+  color: #585f80;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 2rem;
+  margin: 0;
+}
+
+.datos dt {
+  color: #585f80;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.datos dd {
+  margin: 0.15rem 0 0;
+  font-weight: 700;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabla th {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #1a1d3a;
+  text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #585f80;
+}
+
+.tabla td {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #e9edf7;
+}
+
+.num {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.totales {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: min(100%, 340px);
+  margin: 0 0 0 auto;
+}
+
+.totales div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.totales dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.total {
+  padding-top: 0.5rem;
+  border-top: 2px solid #1a1d3a;
+  font-size: 1.2rem;
+}
+
+.iva {
+  color: #585f80;
+  font-size: 0.8rem;
+}
+
+.iva dd {
+  font-weight: 400 !important;
+}
+
+.pie {
+  padding-top: 1rem;
+  border-top: 1px solid #e9edf7;
+  color: #585f80;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@media print {
+  .acciones {
+    display: none;
+  }
+
+  .page {
+    max-width: none;
+    padding: 0;
+  }
+
+  .hoja {
+    border: none;
+    padding: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .datos {
+    grid-template-columns: 1fr;
+  }
+
+  .documento {
+    text-align: left;
+  }
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

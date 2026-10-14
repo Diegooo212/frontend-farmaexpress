@@ -1,5 +1,6 @@
 .wrapper {
   position: relative;
+  display: flex;
 }
 
 .badge {
@@ -142,5 +143,71 @@
     right: 16px;
     left: 16px;
     width: auto;
+  }
+}
+
+.PAGO_APROBADO {
+  --status: var(--color-success);
+}
+
+.PAGO_RECHAZADO {
+  --status: var(--color-danger);
+}
+
+.PEDIDO_EN_PREPARACION,
+.PEDIDO_EN_CAMINO {
+  --status: var(--color-primary);
+}
+
+.PEDIDO_LISTO_RETIRO,
+.PEDIDO_ENTREGADO {
+  --status: var(--color-success);
+}
+
+/* La campana se balancea desde arriba, como una campana real */
+.sacudir svg {
+  transform-origin: 50% 10%;
+  animation: campana 0.9s ease-in-out;
+}
+
+.sacudir {
+  animation: campanaBoton 0.9s linear;
+}
+
+@keyframes campanaBoton {
+  to {
+    transform: none;
+  }
+}
+
+@keyframes campana {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(18deg);
+  }
+  30% {
+    transform: rotate(-16deg);
+  }
+  45% {
+    transform: rotate(12deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+
+.badge {
+  animation: saltoAviso 0.45s var(--ease-spring);
+}
+
+@keyframes saltoAviso {
+  from {
+    transform: scale(0.3);
   }
 }

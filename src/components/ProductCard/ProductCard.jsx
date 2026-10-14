@@ -1,18 +1,22 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Minus, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useCatalog } from '../../context/CatalogContext';
 import { formatCLP } from '../../utils/format';
 import { apiErrorMessage } from '../../api/httpClient';
-import { getStockLevel, stockLabel } from '../../utils/stock';
-import MedBox from '../MedBox/MedBox';
+import { getStockLevel, limitePorPedido, stockLabel, stockTotal } from '../../utils/stock';
+import ProductImage from '../ProductImage/ProductImage';
+import ProductBadges from '../ProductBadges/ProductBadges';
+import ProductForm from '../ProductForm/ProductForm';
+import FavoriteButton from '../FavoriteButton/FavoriteButton';
+import { volarAlCarrito } from '../../utils/volarAlCarrito';
 import styles from './ProductCard.module.css';
 
 export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, onViewDetail }) {
   const { addItem, updateQty, items, canUseCart } = useCart();
+  const { categorias } = useCatalog();
   const [isEditing, setIsEditing] = useState(false);
-  const [precio, setPrecio] = useState(medicamento.precio);
-  const [stock, setStock] = useState(medicamento.stock);
   const [saveError, setSaveError] = useState('');
   const [confirmando, setConfirmando] = useState(false);
   const [eliminando, setEliminando] = useState(false);
@@ -20,17 +24,13 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
   const level = getStockLevel(medicamento.stock);
   const cartQty = items.find((i) => i.id === medicamento.id)?.cantidad || 0;
   const canAddMore = cartQty < medicamento.stock;
+  const mediaRef = useRef(null);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaveError('');
-    try {
-      await onSave(medicamento.id, { precio: Number(precio), stock: Number(stock) });
-      setIsEditing(false);
-    } catch (err) {
-      setSaveError(apiErrorMessage(err, 'No se pudieron guardar los cambios.'));
-    }
+  const agregar = () => {
+    addItem(medicamento, 1);
+    volarAlCarrito(mediaRef.current?.querySelector('button'));
   };
+
 
   const handleDelete = async () => {
     setEliminando(true);
@@ -45,71 +45,35 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
     }
   };
 
-  const handleCancel = () => {
-    setPrecio(medicamento.precio);
-    setStock(medicamento.stock);
-    setIsEditing(false);
-  };
 
   return (
     <article className={styles.card}>
-      <button
-        className={styles.boxButton}
-        onClick={() => onViewDetail(medicamento)}
-        aria-label={`Ver detalle de ${medicamento.nombre}`}
-      >
-        <MedBox medicamento={medicamento} />
-      </button>
+      <div className={styles.media} ref={mediaRef}>
+        <button
+          className={styles.boxButton}
+          onClick={() => onViewDetail(medicamento)}
+          aria-label={`Ver detalle de ${medicamento.nombre}`}
+        >
+          <ProductImage medicamento={medicamento} />
+        </button>
+        {!isAdmin && <FavoriteButton medicamento={medicamento} className={styles.favorito} />}
+      </div>
 
       <div className={styles.info}>
+        <ProductBadges medicamento={medicamento} compacto />
         <h3 className={styles.name}>{medicamento.nombre}</h3>
+        {medicamento.presentacion && <p className={styles.presentacion}>{medicamento.presentacion}</p>}
         <div className={styles.meta}>
           <span className={styles.price}>{formatCLP(medicamento.precio)}</span>
-          <span className={`${styles.stock} ${styles[level]}`}>{stockLabel(medicamento.stock)}</span>
+          <span className={`${styles.stock} ${styles[level]}`}>
+            {medicamento.stock === 0 ? stockLabel(0) : stockLabel(stockTotal(medicamento))}
+          </span>
         </div>
+        {limitePorPedido(medicamento) && <span className={styles.limite}>{limitePorPedido(medicamento)}</span>}
       </div>
 
       {isAdmin ? (
-        isEditing ? (
-          <form className={styles.editForm} onSubmit={handleSave}>
-            <label className="field">
-              Precio
-              <input
-                className="input"
-                type="number"
-                min="0"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
-                required
-              />
-            </label>
-            <label className="field">
-              Stock
-              <input
-                className="input"
-                type="number"
-                min="0"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-                required
-              />
-            </label>
-            {saveError && (
-              <p className={`alert alert-error ${styles.editActions}`} role="alert">
-                {saveError}
-              </p>
-            )}
-            <div className={styles.editActions}>
-              <button type="submit" className="btn btn-primary btn-sm">
-                Guardar
-              </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={handleCancel}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        ) : (
-          confirmando ? (
+        confirmando ? (
             <div className={styles.confirmar} role="alert">
               <p>¿Eliminar {medicamento.nombre} del catálogo? Esta acción no se puede deshacer.</p>
               <div className={styles.editActions}>
@@ -123,6 +87,14 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
             </div>
           ) : (
             <div className={styles.adminActions}>
+              <ProductForm
+                key={isEditing ? 'abierto' : 'cerrado'}
+                isOpen={isEditing}
+                onClose={() => setIsEditing(false)}
+                medicamento={medicamento}
+                categorias={categorias}
+                onGuardar={(cambios) => onSave(medicamento.id, cambios)}
+              />
               <button className="btn btn-outline btn-sm" onClick={() => setIsEditing(true)}>
                 <Pencil size={15} /> Editar
               </button>
@@ -136,7 +108,6 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
               )}
             </div>
           )
-        )
       ) : !canUseCart && level !== 'out' ? (
         <Link to="/login" state={{ from: '/catalogo' }} className="btn btn-outline btn-sm">
           Inicia sesión para comprar
@@ -152,7 +123,7 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
             </button>
             <span aria-live="polite">{cartQty} en el carrito</span>
             <button
-              onClick={() => addItem(medicamento, 1)}
+              onClick={agregar}
               disabled={!canAddMore}
               aria-label={`Agregar una unidad de ${medicamento.nombre}`}
               title={!canAddMore ? 'No queda más stock disponible' : undefined}
@@ -165,7 +136,7 @@ export default function ProductCard({ medicamento, isAdmin, onSave, onDelete, on
         <button
           className="btn btn-primary btn-sm"
           disabled={level === 'out'}
-          onClick={() => addItem(medicamento, 1)}
+          onClick={agregar}
         >
           {level === 'out' ? 'Agotado' : 'Agregar al carrito'}
         </button>

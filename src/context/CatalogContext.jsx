@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   getMedicamentos,
+  getCategorias,
   createMedicamento as apiCreate,
   updateMedicamento as apiUpdate,
   deleteMedicamento as apiDelete,
@@ -26,6 +27,7 @@ function saveStoredMock(data) {
 
 export function CatalogProvider({ children }) {
   const [medicamentos, setMedicamentos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [usingMock, setUsingMock] = useState(false);
   const [error, setError] = useState(null);
@@ -33,8 +35,9 @@ export function CatalogProvider({ children }) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getMedicamentos();
+      const [data, cats] = await Promise.all([getMedicamentos(), getCategorias().catch(() => [])]);
       setMedicamentos(data);
+      setCategorias(cats);
       setUsingMock(false);
       setError(null);
     } catch (err) {
@@ -72,8 +75,9 @@ export function CatalogProvider({ children }) {
       updateMockState((prev) => [...prev, { id: Date.now(), ...payload }]);
       return;
     }
-    await apiCreate(payload);
+    const creado = await apiCreate(payload);
     await load();
+    return creado;
   };
 
   const updateMedicamento = async (id, changes) => {
@@ -95,28 +99,17 @@ export function CatalogProvider({ children }) {
     await load();
   };
 
-  // Solo para el modo sin backend: con backend, la compra la hace el BFF (POST /orders).
-  const purchaseMock = (items) => {
-    updateMockState((prev) =>
-      prev.map((m) => {
-        const purchased = items.find((i) => i.id === m.id);
-        if (!purchased) return m;
-        return { ...m, stock: Math.max(0, m.stock - purchased.cantidad) };
-      })
-    );
-  };
-
   return (
     <CatalogContext.Provider
       value={{
         medicamentos,
+        categorias,
         loading,
         usingMock,
         error,
         createMedicamento,
         updateMedicamento,
         deleteMedicamento,
-        purchaseMock,
         refresh: load,
       }}
     >

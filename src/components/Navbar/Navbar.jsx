@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ClipboardList, Files, Pill, LogOut } from 'lucide-react';
+import { Boxes, ClipboardList, CreditCard, Files, Network, Package, Pill, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import Logo from '../Logo/Logo';
@@ -8,6 +8,10 @@ import styles from './Navbar.module.css';
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Cola de trabajo', icon: ClipboardList },
   { to: '/recetas', label: 'Todas las recetas', icon: Files },
+  { to: '/pedidos', label: 'Pedidos', icon: Package },
+  { to: '/inventario', label: 'Inventario y lotes', icon: Boxes },
+  { to: '/medios-de-pago', label: 'Medios de pago', icon: CreditCard, soloAdmin: true },
+  { to: '/rabbitmq', label: 'RabbitMQ', icon: Network, soloAdmin: true },
 ];
 
 export default function Navbar() {
@@ -29,7 +33,7 @@ export default function Navbar() {
       </div>
 
       <nav className={styles.nav} aria-label="Panel de farmacia">
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+        {NAV_ITEMS.filter((item) => !item.soloAdmin || user?.roles?.includes('Admin')).map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}

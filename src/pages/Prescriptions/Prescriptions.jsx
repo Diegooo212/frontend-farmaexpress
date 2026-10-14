@@ -6,6 +6,7 @@ import PrescriptionDetailDrawer from '../../components/PrescriptionDetailDrawer/
 import { NEXT_STATUS, STATUS_LABELS } from '../../utils/prescriptionStatus';
 import { formatDate } from '../../utils/format';
 import styles from './Prescriptions.module.css';
+import Skeleton from '../../components/Skeleton/Skeleton';
 
 export default function Prescriptions() {
   const { user } = useAuth();
@@ -87,7 +88,7 @@ export default function Prescriptions() {
       )}
 
       {loading ? (
-        <p className={styles.state}>Cargando recetas…</p>
+        <Skeleton filas={5} alto={56} etiqueta="Cargando recetas…" />
       ) : (
         <div className={styles.tableWrap}>
           <table className={styles.table}>

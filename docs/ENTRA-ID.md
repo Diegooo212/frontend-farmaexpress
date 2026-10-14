@@ -21,23 +21,47 @@ Portal: https://entra.microsoft.com, cambiando al directorio del tenant externo.
 - El dominio de inicio de sesión es `https://<tenant-id>.ciamlogin.com/<tenant-id>`. El frontend lo arma solo desde el tenant ID.
 - **Usuarios registrados**: *Users → All users*. Ahí aparecen quienes se registraron desde FarmaExpress (columna *Creation type* = *Self-service sign-up*).
 
-## 2. App Registration (EP2, indicador 4)
+## 2. Dos App Registrations: la API y el frontend (EP2, indicador 4)
 
-*Applications → App registrations → FarmaExpress*. Se usa **una sola** registración para el SPA y la API.
+Se usan **dos** registraciones, como en una arquitectura real: una representa la **API** (el backend, que
+define los permisos) y otra el **frontend** (la aplicación con la que la persona inicia sesión).
+
+```
+FarmaExpress Web (SPA) ──pide un token para──► FarmaExpress API ──► el token trae aud = API, scp y roles
+      VITE_AZURE_CLIENT_ID                         VITE_AZURE_API_CLIENT_ID · AZURE_API_CLIENT_ID (backend)
+```
+
+### 2.1 App de la API: "FarmaExpress API" (la que ya tienes)
+
+*Applications → App registrations → tu app actual*. Puedes renombrarla a **FarmaExpress API** (*Branding & properties*).
 
 | Sección | Configuración |
 |---|---|
-| **Overview** | *Application (client) ID* → `VITE_AZURE_CLIENT_ID` y `VITE_AZURE_API_CLIENT_ID` (mismo valor) |
-| **Authentication** | Plataforma **Single-page application**, con las Redirect URIs `http://localhost:5173` y `https://<tu-dominio>.cloudfront.net`. **No** marques *Access tokens* ni *ID tokens* (implicit grant): el SPA usa Authorization Code + PKCE. |
-| **Expose an API** | *Application ID URI* = `api://<client-id>`. Scope **`access_as_user`** (*Who can consent: Admins and users*, estado *Enabled*). |
-| **API permissions** | Microsoft Graph (delegated): `openid`, `profile`, `email`, `offline_access`. Tu API: `access_as_user`. Luego **Grant admin consent**. |
-| **App roles** | `Administrador`, `Operador` y `Cliente`. *Allowed member types: Users/Groups*. El backend y el frontend reconocen `Administrador` (o `Admin`) como administrador, sin importar mayúsculas. |
-| **Token configuration** | *Add optional claim* → **ID** y **Access**: `email`. Así el token trae el correo de la persona. |
-| **Manifest** | `"requestedAccessTokenVersion": 2`. Tokens v2: el `iss` es `https://<tenant>.ciamlogin.com/<tenant>/v2.0`, el mismo que validan API Gateway y el backend. |
+| **Overview** | *Application (client) ID* → `VITE_AZURE_API_CLIENT_ID` (frontend) y `AZURE_API_CLIENT_ID` (backend). **No cambia.** |
+| **Expose an API** | *Application ID URI* = `api://<client-id-api>`. Scope **`access_as_user`** (*Admins and users*, *Enabled*). |
+| **Expose an API → Authorized client applications** | **Add a client application** → pega el client ID de **FarmaExpress Web** y marca `access_as_user`. Así el login no pide consentimiento extra. |
+| **App roles** | `Administrador`, `Operador` y `Cliente` (*Users/Groups*). Los roles viajan en el token de la API, por eso quedan aquí. |
+| **Token configuration** | *Add optional claim* → **Access**: `email`. |
+| **Manifest** | `"requestedAccessTokenVersion": 2`. |
+| **Authentication** | Cuando la app del frontend funcione, puedes quitar de aquí la plataforma *Single-page application* (ya no inicia sesión nadie con esta app). |
+
+### 2.2 App del frontend: "FarmaExpress Web" (nueva)
+
+*App registrations → New registration*:
+
+1. **Name:** `FarmaExpress Web` · **Supported account types:** solo este directorio (*Single tenant*).
+2. **Redirect URI:** plataforma **Single-page application (SPA)** → `http://localhost:5173` → *Register*.
+3. Copia el **Application (client) ID** → `VITE_AZURE_CLIENT_ID` en el `.env` del frontend.
+4. **Authentication** → *Add URI* → `https://main.d1gism6shpd81i.amplifyapp.com`. **No** marques *Access tokens* ni *ID tokens* (implicit grant): se usa Authorization Code + PKCE.
+5. **API permissions** → *Add a permission* → **APIs my organization uses** (o *My APIs*) → **FarmaExpress API** → *Delegated* → `access_as_user` → *Add*. Verifica que también estén `openid`, `profile`, `email` y `offline_access` de Microsoft Graph. Luego **Grant admin consent**.
+6. **Token configuration** → *Add optional claim* → **ID**: `email`.
+7. Vuelve a la app de la API y agrega este client ID en *Authorized client applications* (tabla 2.1).
+
+> **No** se crean App Roles ni *Expose an API* en esta app: los permisos los define la API.
 
 ### Asignar roles a usuarios
 
-*Enterprise applications → FarmaExpress → Users and groups → Add user/group*, elige una persona y el rol (`Administrador`, `Operador` o `Cliente`).
+*Enterprise applications → **FarmaExpress API** → Users and groups → Add user/group*, elige una persona y el rol (`Administrador`, `Operador` o `Cliente`). Los roles se asignan en la app de **la API**, no en la del frontend; las asignaciones que ya tienes siguen sirviendo.
 Quien no tiene rol asignado entra igual como **Cliente**.
 
 > Deja *Properties → Assignment required?* en **No**. Así cualquiera que se registre puede entrar como cliente.
@@ -81,11 +105,13 @@ Para evidenciarlo en la demo:
 ## 5. Variables del frontend (`.env`)
 
 ```properties
-VITE_AZURE_CLIENT_ID=<client id>
 VITE_AZURE_TENANT_ID=<tenant id>
-VITE_AZURE_API_CLIENT_ID=<client id>          # misma App Registration
+VITE_AZURE_CLIENT_ID=<client id de FarmaExpress Web>   # app del frontend (inicio de sesión)
+VITE_AZURE_API_CLIENT_ID=<client id de FarmaExpress API> # app de la API (scope, roles, aud)
 VITE_AZURE_REDIRECT_URI=http://localhost:5173 # en producción se deja vacío (usa el dominio actual)
 VITE_API_BASE_URL=http://localhost:8080       # en producción: URL del API Gateway
 ```
 
-El backend usa `AZURE_TENANT_ID` y `AZURE_API_CLIENT_ID` con los mismos valores.
+El backend usa `AZURE_TENANT_ID` y `AZURE_API_CLIENT_ID` (el de **la API**). El ID de la app del frontend no lo necesita el backend.
+
+Después de cambiar el `.env`: en local, reinicia `npm run dev` o reconstruye el contenedor (`docker compose up -d --build`); en Amplify, vuelve a publicar con `export AZURE_CLIENT_ID=<client id de FarmaExpress Web>` y `bash deploy/publicar-amplify.sh`.

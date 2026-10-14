@@ -193,3 +193,74 @@
     width: 100%;
   }
 }
+
+.sinConexion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Categorías: fila deslizable de accesos con ícono (como en las farmacias online). */
+.categorias {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.categoria {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+}
+
+.categoria svg {
+  color: var(--color-primary);
+}
+
+.categoria small {
+  min-width: 22px;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.categoria:hover {
+  border-color: var(--color-primary);
+}
+
+.categoriaActiva {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.categoriaActiva svg {
+  color: inherit;
+}
+
+.categoriaActiva small {
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+}

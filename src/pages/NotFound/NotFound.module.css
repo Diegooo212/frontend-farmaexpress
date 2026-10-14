@@ -1,0 +1,86 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 4rem var(--gutter) 2rem;
+  text-align: center;
+}
+
+.codigo {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 14vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+}
+
+.lead {
+  color: var(--color-text-muted);
+}
+
+.lead code {
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-box);
+  background: var(--color-surface-2);
+  font-size: 0.9em;
+  word-break: break-all;
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+
+.buscador:focus-within {
+  border-color: var(--color-primary);
+}
+
+.buscador svg {
+  color: var(--color-text-muted);
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  outline: none;
+}
+
+.accesos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.accesos a {
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.accesos a:hover {
+  border-color: var(--color-primary);
+}

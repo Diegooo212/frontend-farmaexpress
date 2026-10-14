@@ -1,0 +1,109 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  max-width: 75ch;
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1.25rem;
+  border: 1.5px solid var(--color-border);
+  border-top-width: 5px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.ok {
+  border-top-color: var(--color-success);
+}
+
+.falla {
+  border-top-color: var(--color-danger);
+}
+
+.prueba {
+  border-top-color: var(--color-warning);
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.modo {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.estado {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ok .estado {
+  color: var(--color-success);
+}
+
+.falla .estado {
+  color: var(--color-danger);
+}
+
+.prueba .estado {
+  color: var(--color-warning);
+}
+
+.texto {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.aviso {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+.card button {
+  gap: 0.4rem;
+  margin-top: auto;
+}
+
+.pasos {
+  max-width: 75ch;
+  padding-left: 1.2rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}

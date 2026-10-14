@@ -1,13 +1,14 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-// Guard de rutas: exige sesión de Entra ID y, si se indican, alguno de los roles del token.
+// Guard de rutas: exige sesión de Entra ID y, si se indican, alguno de los roles de la persona.
 export default function ProtectedRoute({ children, roles }) {
   const { isAuthenticated, loading, user } = useAuth();
   const location = useLocation();
 
-  // MSAL todavía está procesando la vuelta desde Microsoft: no se decide nada aún.
-  if (loading && !isAuthenticated) {
+  // MSAL todavía procesa la vuelta desde Microsoft, o (si la ruta exige un rol) aún no llegan los roles
+  // desde el BFF: no se decide nada todavía.
+  if (loading && (!isAuthenticated || roles?.length)) {
     return <p style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>Verificando tu sesión…</p>;
   }
 

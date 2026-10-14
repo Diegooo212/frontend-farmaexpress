@@ -7,8 +7,3 @@ export const saveCart = (items) =>
   httpClient
     .put('/api/bff/cart', { items: items.map(({ id, cantidad }) => ({ id, cantidad })) })
     .then((res) => res.data);
-
-// Compra el carrito guardado: el catálogo descuenta el stock y se registra el pedido.
-export const createOrder = () => httpClient.post('/api/bff/orders').then((res) => res.data);
-
-export const getOrders = () => httpClient.get('/api/bff/orders').then((res) => res.data);

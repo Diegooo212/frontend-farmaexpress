@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Search, Plus } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { LayoutGrid, Search, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { useDebounce } from '../../hooks/useDebounce';
-import { apiErrorMessage } from '../../api/httpClient';
-import Modal from '../../components/Modal/Modal';
+import CategoryIcon from '../../components/CategoryIcon/CategoryIcon';
+import ProductForm from '../../components/ProductForm/ProductForm';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import ProductDetailModal from '../../components/ProductDetailModal/ProductDetailModal';
 import Pagination from '../../components/Pagination/Pagination';
@@ -20,14 +21,26 @@ const SORTERS = {
 // Productos por página: 24 llena filas completas con 2, 3 o 4 columnas.
 const POR_PAGINA = 24;
 
-const EMPTY_FORM = { nombre: '', sku: '', precio: '', stock: '' };
-
 export default function Catalog() {
   const { user } = useAuth();
   const isAdmin = (user?.roles || []).includes('Admin');
-  const { medicamentos, loading, createMedicamento, updateMedicamento, deleteMedicamento } = useCatalog();
+  const { medicamentos, categorias, loading, usingMock, refresh, createMedicamento, updateMedicamento, deleteMedicamento } =
+    useCatalog();
+  // La categoría va en la URL (/catalogo?categoria=alergias) para poder enlazarla desde el inicio.
+  const [params, setParams] = useSearchParams();
+  const categoriaSlug = params.get('categoria') || '';
+  const categoria = categorias.find((c) => c.slug === categoriaSlug) || null;
+  const elegirCategoria = (slug) => {
+    const siguientes = new URLSearchParams(params);
+    if (slug) siguientes.set('categoria', slug);
+    else siguientes.delete('categoria');
+    setParams(siguientes, { replace: true });
+  };
+  const [ventaLibre, setVentaLibre] = useState(false);
+  // Búsqueda que llega por la URL (/catalogo?q=paracetamol), por ejemplo desde la página 404.
+  const [search, setSearch] = useState(() => params.get('q') || '');
 
-  const [search, setSearch] = useState('');
+
   const debouncedSearch = useDebounce(search, 300);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -35,8 +48,6 @@ export default function Catalog() {
   const [sort, setSort] = useState('relevancia');
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [nuevo, setNuevo] = useState(EMPTY_FORM);
-  const [createError, setCreateError] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   // Se busca en el catálogo vivo para que el detalle refleje el stock actualizado.
   const selectedProduct = medicamentos.find((m) => m.id === selectedId) || null;
@@ -44,19 +55,23 @@ export default function Catalog() {
   const filtered = useMemo(() => {
     const term = debouncedSearch.trim().toLowerCase();
     const result = medicamentos.filter((m) => {
+      // Se busca por nombre, código, principio activo o laboratorio.
       const matchesSearch =
-        !term || m.nombre.toLowerCase().includes(term) || m.sku.toLowerCase().includes(term);
+        !term ||
+        [m.nombre, m.sku, m.principioActivo, m.laboratorio].some((v) => v && v.toLowerCase().includes(term));
+      const matchesCategoria = !categoriaSlug || m.categoriaSlug === categoriaSlug;
+      const matchesReceta = !ventaLibre || !m.requiereReceta;
       const matchesMin = !minPrice || m.precio >= Number(minPrice);
       const matchesMax = !maxPrice || m.precio <= Number(maxPrice);
       const matchesStock = !onlyAvailable || m.stock > 0;
-      return matchesSearch && matchesMin && matchesMax && matchesStock;
+      return matchesSearch && matchesCategoria && matchesReceta && matchesMin && matchesMax && matchesStock;
     });
     return SORTERS[sort] ? [...result].sort(SORTERS[sort]) : result;
-  }, [medicamentos, debouncedSearch, minPrice, maxPrice, onlyAvailable, sort]);
+  }, [medicamentos, debouncedSearch, categoriaSlug, ventaLibre, minPrice, maxPrice, onlyAvailable, sort]);
 
   // Paginación: al buscar, filtrar u ordenar se vuelve a la primera página.
   const [pagina, setPagina] = useState(1);
-  const claveFiltros = `${debouncedSearch}|${minPrice}|${maxPrice}|${onlyAvailable}|${sort}`;
+  const claveFiltros = `${debouncedSearch}|${categoriaSlug}|${ventaLibre}|${minPrice}|${maxPrice}|${onlyAvailable}|${sort}`;
   const [claveAnterior, setClaveAnterior] = useState(claveFiltros);
   if (claveAnterior !== claveFiltros) {
     setClaveAnterior(claveFiltros);
@@ -73,30 +88,15 @@ export default function Catalog() {
     document.getElementById('catalogo')?.scrollIntoView();
   };
 
-  const hasFilters = search || minPrice || maxPrice || onlyAvailable;
+  const hasFilters = search || categoriaSlug || ventaLibre || minPrice || maxPrice || onlyAvailable;
 
   const clearFilters = () => {
     setSearch('');
     setMinPrice('');
     setMaxPrice('');
     setOnlyAvailable(false);
-  };
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    setCreateError('');
-    try {
-      await createMedicamento({
-        nombre: nuevo.nombre,
-        sku: nuevo.sku,
-        precio: Number(nuevo.precio),
-        stock: Number(nuevo.stock),
-      });
-      setNuevo(EMPTY_FORM);
-      setIsCreateOpen(false);
-    } catch (err) {
-      setCreateError(apiErrorMessage(err, 'No se pudo crear el medicamento.'));
-    }
+    setVentaLibre(false);
+    elegirCategoria('');
   };
 
   return (
@@ -104,20 +104,61 @@ export default function Catalog() {
       <div className={styles.head}>
         <div>
           <h1 id="catalogo-title" className={styles.title}>
-            Catálogo
+            {categoria ? categoria.nombre : 'Catálogo'}
           </h1>
           <p className={styles.lead}>
             {loading
-              ? 'Cargando medicamentos…'
-              : `${medicamentos.length} medicamentos para comprar en línea y retirar en farmacia.`}
+              ? 'Cargando productos…'
+              : categoria
+                ? categoria.descripcion
+                : `${medicamentos.length} productos para comprar en línea y retirar en farmacia o recibir en tu casa.`}
           </p>
         </div>
         {isAdmin && (
           <button className="btn btn-primary" onClick={() => setIsCreateOpen(true)}>
-            <Plus size={18} /> Añadir medicamento
+            <Plus size={18} /> Añadir producto
           </button>
         )}
       </div>
+
+      {usingMock && (
+        <div className={`alert alert-error ${styles.sinConexion}`} role="alert">
+          <span>
+            No pudimos conectar con FarmaExpress. Te mostramos el último catálogo disponible: los precios y el stock
+            pueden no estar actualizados.
+          </span>
+          <button className="btn btn-outline btn-sm" onClick={refresh}>
+            Reintentar
+          </button>
+        </div>
+      )}
+
+      {categorias.length > 0 && (
+        <nav className={styles.categorias} aria-label="Categorías">
+          <button
+            type="button"
+            className={`${styles.categoria} ${!categoriaSlug ? styles.categoriaActiva : ''}`}
+            onClick={() => elegirCategoria('')}
+            aria-pressed={!categoriaSlug}
+          >
+            <LayoutGrid size={20} aria-hidden="true" />
+            <span>Todo</span>
+          </button>
+          {categorias.map((c) => (
+            <button
+              key={c.slug}
+              type="button"
+              className={`${styles.categoria} ${categoriaSlug === c.slug ? styles.categoriaActiva : ''}`}
+              onClick={() => elegirCategoria(c.slug)}
+              aria-pressed={categoriaSlug === c.slug}
+            >
+              <CategoryIcon icono={c.icono} size={20} />
+              <span>{c.nombre}</span>
+              <small>{c.productos}</small>
+            </button>
+          ))}
+        </nav>
+      )}
 
       <div className={styles.toolbar} role="search">
         <label className={styles.search}>
@@ -125,7 +166,7 @@ export default function Catalog() {
           <span className="visually-hidden">Buscar medicamento</span>
           <input
             type="search"
-            placeholder="Buscar por nombre o código"
+            placeholder="Buscar por nombre, principio activo o laboratorio"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -163,6 +204,11 @@ export default function Catalog() {
             onChange={(e) => setOnlyAvailable(e.target.checked)}
           />
           Solo disponibles
+        </label>
+
+        <label className={`${styles.chip} ${ventaLibre ? styles.chipOn : ''}`}>
+          <input type="checkbox" checked={ventaLibre} onChange={(e) => setVentaLibre(e.target.checked)} />
+          Venta libre (sin receta)
         </label>
 
         <label className={styles.sort}>
@@ -212,7 +258,7 @@ export default function Catalog() {
 
           <div className={styles.paginacion}>
             <p className={styles.rango} aria-live="polite">
-              Mostrando {desde + 1}–{desde + visibles.length} de {filtered.length} medicamentos
+              Mostrando {desde + 1}–{desde + visibles.length} de {filtered.length} productos
             </p>
             <Pagination
               pagina={paginaActual}
@@ -232,62 +278,14 @@ export default function Catalog() {
       />
 
       {isAdmin && (
-        <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Nuevo medicamento">
-          <form onSubmit={handleCreate} className={styles.form}>
-            <label className="field">
-              Nombre y dosis
-              <input
-                className="input"
-                placeholder="Paracetamol 500mg"
-                value={nuevo.nombre}
-                onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })}
-                required
-              />
-            </label>
-            <label className="field">
-              Código (SKU)
-              <input
-                className="input"
-                placeholder="MED-007"
-                value={nuevo.sku}
-                onChange={(e) => setNuevo({ ...nuevo, sku: e.target.value })}
-                required
-              />
-            </label>
-            <div className={styles.formRow}>
-              <label className="field">
-                Precio
-                <input
-                  className="input"
-                  type="number"
-                  min="0"
-                  value={nuevo.precio}
-                  onChange={(e) => setNuevo({ ...nuevo, precio: e.target.value })}
-                  required
-                />
-              </label>
-              <label className="field">
-                Stock inicial
-                <input
-                  className="input"
-                  type="number"
-                  min="0"
-                  value={nuevo.stock}
-                  onChange={(e) => setNuevo({ ...nuevo, stock: e.target.value })}
-                  required
-                />
-              </label>
-            </div>
-            {createError && (
-              <p className="alert alert-error" role="alert">
-                {createError}
-              </p>
-            )}
-            <button type="submit" className="btn btn-primary btn-block">
-              Crear medicamento
-            </button>
-          </form>
-        </Modal>
+        <ProductForm
+          key={isCreateOpen ? 'nuevo-abierto' : 'nuevo-cerrado'}
+          isOpen={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          medicamento={null}
+          categorias={categorias}
+          onGuardar={(datos) => createMedicamento({ ...datos, stock: 0 })}
+        />
       )}
     </section>
   );

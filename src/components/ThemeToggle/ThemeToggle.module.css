@@ -5,3 +5,16 @@
 .inverted:hover {
   background: color-mix(in srgb, var(--color-on-ink) 12%, transparent);
 }
+
+.icono {
+  display: grid;
+  place-items: center;
+  animation: girarIcono 0.5s var(--ease-spring);
+}
+
+@keyframes girarIcono {
+  from {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.4);
+  }
+}

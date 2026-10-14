@@ -19,3 +19,15 @@
     padding-top: 1.5rem;
   }
 }
+
+/* Entrada suave al cambiar de sección del panel */
+.content {
+  animation: entrarSeccion 0.45s var(--ease-out);
+}
+
+@keyframes entrarSeccion {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}

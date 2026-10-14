@@ -1,0 +1,15 @@
+{
+  "name": "FarmaExpress",
+  "short_name": "FarmaExpress",
+  "description": "Medicamentos y recetas médicas sin filas.",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#2b45e0",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

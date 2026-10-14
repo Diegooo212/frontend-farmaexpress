@@ -1,0 +1,20 @@
+# Frontend en un contenedor (nginx) en http://localhost:5173, la Redirect URI ya registrada en Entra ID.
+# Toma los IDs de Entra ID y la URL del API de tu .env (VITE_*). El backend se levanta aparte:
+#   cd ../BACKEND && docker compose up -d --build
+#   docker compose up -d --build        (aquí, en FRONTEND)
+name: farmaexpress-frontend
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+        VITE_AZURE_CLIENT_ID: ${VITE_AZURE_CLIENT_ID}
+        VITE_AZURE_TENANT_ID: ${VITE_AZURE_TENANT_ID}
+        VITE_AZURE_API_CLIENT_ID: ${VITE_AZURE_API_CLIENT_ID}
+    image: farmaexpress/frontend
+    container_name: farmaexpress-frontend
+    ports:
+      - "5173:80"
+    restart: unless-stopped

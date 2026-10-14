@@ -1,0 +1,50 @@
+.lista {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.bloque {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+  overflow: hidden;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.linea {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+}
+
+/* Brillo que recorre el bloque. */
+.bloque::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-text) 6%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bloque::after {
+    animation: none;
+  }
+}

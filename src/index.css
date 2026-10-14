@@ -31,6 +31,37 @@ h4 {
   margin: 0;
 }
 
+::selection {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* Barra de desplazamiento fina con el color de la marca */
+html {
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 45%, transparent) transparent;
+}
+
+/* Aparición al hacer scroll: PublicLayout agrega .is-visible cuando el bloque entra en pantalla */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes fx-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
 p {
   margin: 0;
 }
@@ -83,7 +114,16 @@ a {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    box-shadow 0.25s var(--ease-out),
+    transform 0.25s var(--ease-out);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn:disabled {
@@ -186,15 +226,20 @@ a {
   background: var(--color-surface);
   font-size: var(--text-base);
   font-weight: 400;
-  transition: border-color 0.15s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .input:hover {
-  border-color: var(--color-text-muted);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
 }
 
+.input:focus,
 .input:focus-visible {
+  outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 18%, transparent);
 }
 
 textarea.input {
@@ -206,6 +251,7 @@ textarea.input {
   padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
+  animation: fx-aparecer 0.35s var(--ease-out);
 }
 
 .alert-error {
@@ -228,6 +274,11 @@ textarea.input {
     scroll-behavior: auto;
   }
 
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
   *,
   *::before,
   *::after {
@@ -235,4 +286,15 @@ textarea.input {
     animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Cambio de tema: la vista nueva se revela en círculo (ver ThemeToggle) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
 }

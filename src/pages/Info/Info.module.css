@@ -1,0 +1,73 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem var(--gutter) 2rem;
+  line-height: 1.65;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: 0.5rem;
+  color: var(--color-text-muted);
+}
+
+.indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.indice a {
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.indice a:hover {
+  border-color: var(--color-primary);
+}
+
+.seccion {
+  margin-top: 2.25rem;
+  scroll-margin-top: 90px;
+}
+
+.seccion h2 {
+  margin-bottom: 0.6rem;
+  font-size: var(--text-lg);
+}
+
+.seccion ul {
+  padding-left: 1.2rem;
+}
+
+.pregunta {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pregunta summary {
+  padding: 0.9rem 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pregunta p {
+  padding-bottom: 1rem;
+  color: var(--color-text-muted);
+}
+
+.nota {
+  margin-top: 2.5rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

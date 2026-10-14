@@ -2,6 +2,9 @@ import httpClient from './httpClient';
 
 const BASE = '/api/bff/catalog';
 
+// Públicas: categorías de la tienda con cuántos productos tiene cada una.
+export const getCategorias = () => httpClient.get(`${BASE}/categorias`).then((res) => res.data);
+
 export const getMedicamentos = () =>
   httpClient.get(`${BASE}/medicamentos`).then((res) => res.data);
 

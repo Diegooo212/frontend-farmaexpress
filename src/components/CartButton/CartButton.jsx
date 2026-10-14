@@ -1,40 +1,54 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingBag, Minus, Plus, Trash2, CheckCircle2 } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingBag, Minus, Plus, Trash2, Lock } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext';
 import { formatCLP } from '../../utils/format';
-import { apiErrorMessage } from '../../api/httpClient';
+import { cantidadVisible } from '../../utils/stock';
 import Drawer from '../Drawer/Drawer';
-import MedBox from '../MedBox/MedBox';
+import ProductImage from '../ProductImage/ProductImage';
+import ProductBadges from '../ProductBadges/ProductBadges';
+import { EVENTO_LLEGO_AL_CARRITO } from '../../utils/volarAlCarrito';
 import styles from './CartButton.module.css';
 
 export default function CartButton() {
-  const { items, updateQty, removeItem, total, count, checkout } = useCart();
+  const { items, updateQty, removeItem, total, count, abierto: isOpen, abrirCarrito, cerrarCarrito } = useCart();
   const { medicamentos } = useCatalog();
-  const [isOpen, setIsOpen] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const botonRef = useRef(null);
 
-  const handleCheckout = async () => {
-    setConfirming(true);
-    setError('');
-    try {
-      const pedido = await checkout();
-      setSuccess({ pedido });
-    } catch (err) {
-      // Por ejemplo, otro cliente compró el último envase: el backend explica qué falta.
-      setError(apiErrorMessage(err, 'No pudimos completar la compra.'));
-    } finally {
-      setConfirming(false);
+  // Cuando un producto "aterriza" en el carrito, el ícono rebota.
+  useEffect(() => {
+    const rebotar = () => {
+      const boton = botonRef.current;
+      if (!boton) return;
+      boton.classList.remove(styles.rebote);
+      void boton.offsetWidth; // reinicia la animación si llegan varios seguidos
+      boton.classList.add(styles.rebote);
+    };
+    window.addEventListener(EVENTO_LLEGO_AL_CARRITO, rebotar);
+    return () => window.removeEventListener(EVENTO_LLEGO_AL_CARRITO, rebotar);
+  }, []);
+
+  const handleClose = cerrarCarrito;
+
+  // Al quitar un producto, su fila se desliza hacia afuera y luego se elimina.
+  const animarSalida = (e, accion) => {
+    const fila = e.currentTarget.closest('li');
+    if (!fila || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      accion();
+      return;
     }
+    fila.classList.add(styles.saliendo);
+    fila.addEventListener('animationend', accion, { once: true });
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setSuccess(null);
-    setError('');
+  const conReceta = items.filter((i) => medicamentos.find((m) => m.id === i.id)?.requiereReceta);
+
+  // La compra se completa en el checkout: entrega, medio de pago y resumen.
+  const irAPagar = () => {
+    cerrarCarrito();
+    navigate('/checkout');
   };
 
   const footer =
@@ -44,13 +58,15 @@ export default function CartButton() {
           <span>Total</span>
           <span className={styles.totalValue}>{formatCLP(total)}</span>
         </div>
-        {error && (
-          <p className={`alert alert-error ${styles.checkoutError}`} role="alert">
-            {error}
+        {conReceta.length > 0 && (
+          <p className={styles.notaReceta}>
+            Tu carrito tiene {conReceta.length === 1 ? 'un producto' : `${conReceta.length} productos`} de venta bajo
+            receta: al pagar elegirás una receta validada.
           </p>
         )}
-        <button className="btn btn-primary btn-block" onClick={handleCheckout} disabled={confirming}>
-          {confirming ? 'Procesando compra…' : 'Finalizar compra'}
+        <p className={styles.envio}>Retiro en farmacia gratis · Despacho gratis desde $25.000</p>
+        <button className="btn btn-primary btn-block" onClick={irAPagar}>
+          <Lock size={16} /> Ir a pagar
         </button>
       </>
     ) : null;
@@ -58,28 +74,23 @@ export default function CartButton() {
   return (
     <>
       <button
+        ref={botonRef}
+        data-cart-target
         className="icon-btn"
-        onClick={() => setIsOpen(true)}
+        onAnimationEnd={(e) => e.target === e.currentTarget && e.currentTarget.classList.remove(styles.rebote)}
+        onClick={abrirCarrito}
         aria-label={count > 0 ? `Carrito, ${count} productos` : 'Carrito'}
       >
         <ShoppingBag size={21} />
-        {count > 0 && <span className={styles.badge}>{count}</span>}
+        {count > 0 && (
+          <span key={count} className={styles.badge}>
+            {count}
+          </span>
+        )}
       </button>
 
       <Drawer isOpen={isOpen} onClose={handleClose} title="Tu carrito" footer={footer}>
-        {success && (
-          <div className={styles.done}>
-            <CheckCircle2 size={40} />
-            <h3>Compra finalizada</h3>
-            <p>
-              {success.pedido
-                ? `Pedido N° ${success.pedido.id} por ${formatCLP(success.pedido.total)}. El stock ya fue descontado.`
-                : 'Tu pedido quedó registrado y el stock ya fue descontado.'}
-            </p>
-          </div>
-        )}
-
-        {!success && items.length === 0 && (
+        {items.length === 0 && (
           <div className={styles.empty}>
             <p>Tu carrito está vacío.</p>
             <Link to="/catalogo" className="btn btn-outline btn-sm" onClick={handleClose}>
@@ -96,12 +107,13 @@ export default function CartButton() {
 
             return (
               <li key={item.id} className={styles.item}>
-                <MedBox medicamento={medicamento || item} size="sm" className={styles.thumb} />
+                <ProductImage medicamento={medicamento || item} size="sm" className={styles.thumb} />
                 <div className={styles.itemInfo}>
                   <span className={styles.itemName}>{item.nombre}</span>
+                  {medicamento?.requiereReceta && <ProductBadges medicamento={{ requiereReceta: true }} compacto />}
                   {medicamento && (
                     <span className={styles.stockNote}>
-                      {atMax ? `Tienes todo el stock (${stock})` : `${stock} en stock`}
+                      {atMax ? `Máximo por pedido (${cantidadVisible(stock)})` : `Hasta ${cantidadVisible(stock)} por pedido`}
                     </span>
                   )}
                   <span className={styles.itemPrice}>
@@ -113,7 +125,11 @@ export default function CartButton() {
                   <div className={styles.itemControls}>
                     <div className={styles.stepper}>
                       <button
-                        onClick={() => updateQty(item.id, item.cantidad - 1, stock)}
+                        onClick={(e) =>
+                          item.cantidad === 1
+                            ? animarSalida(e, () => removeItem(item.id))
+                            : updateQty(item.id, item.cantidad - 1, stock)
+                        }
                         aria-label={`Quitar una unidad de ${item.nombre}`}
                       >
                         <Minus size={16} />
@@ -130,7 +146,7 @@ export default function CartButton() {
                     </div>
                     <button
                       className={styles.remove}
-                      onClick={() => removeItem(item.id)}
+                      onClick={(e) => animarSalida(e, () => removeItem(item.id))}
                       aria-label={`Eliminar ${item.nombre} del carrito`}
                     >
                       <Trash2 size={17} />

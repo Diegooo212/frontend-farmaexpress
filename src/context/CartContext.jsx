@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useCatalog } from './CatalogContext';
-import { getCart, saveCart, createOrder } from '../api/cartApi';
+import { getCart, saveCart } from '../api/cartApi';
+import CartToast from '../components/CartToast/CartToast';
 
 const CartContext = createContext(null);
 const CART_PREFIX = 'farmaexpress_cart_';
@@ -29,7 +30,7 @@ localStorage.removeItem('farmaexpress_cart');
 
 export function CartProvider({ children }) {
   const { user } = useAuth();
-  const { usingMock, purchaseMock, refresh } = useCatalog();
+  const { usingMock, refresh } = useCatalog();
   // Cada cuenta de Entra ID (oid) tiene su propio carrito.
   const owner = user?.id || null;
   // Con backend, el carrito se guarda en el servidor por cuenta (mismo carrito en cualquier dispositivo).
@@ -38,6 +39,17 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => ({ owner, items: loadLocal(owner) }));
   const lastSynced = useRef(null);
   const timer = useRef(null);
+  // Panel del carrito (se abre desde el encabezado o desde el aviso "Ver carrito").
+  const [abierto, setAbierto] = useState(false);
+  // Aviso "Agregado al carrito" del último producto agregado.
+  const [aviso, setAviso] = useState(null);
+  const avisos = useRef(0);
+  const abrirCarrito = useCallback(() => {
+    setAviso(null);
+    setAbierto(true);
+  }, []);
+  const cerrarCarrito = useCallback(() => setAbierto(false), []);
+  const cerrarAviso = useCallback(() => setAviso(null), []);
 
   // Al iniciar o cerrar sesión (o cambiar de cuenta) se carga el carrito de esa cuenta.
   if (cart.owner !== owner) {
@@ -97,7 +109,13 @@ export function CartProvider({ children }) {
     setCart((prev) => ({ owner: prev.owner, items: updater(prev.items) }));
   };
 
-  const addItem = (medicamento, cantidad = 1) => {
+  const addItem = (medicamento, cantidad = 1, { silencioso = false } = {}) => {
+    const enCarrito = items.find((i) => i.id === medicamento.id)?.cantidad || 0;
+    const agregadas = Math.min(cantidad, Math.max(0, medicamento.stock - enCarrito));
+    if (owner && agregadas > 0 && !silencioso) {
+      avisos.current += 1;
+      setAviso({ key: avisos.current, nombre: medicamento.nombre, cantidad: agregadas });
+    }
     setItems((prev) => {
       const existing = prev.find((i) => i.id === medicamento.id);
       const currentQty = existing ? existing.cantidad : 0;
@@ -136,23 +154,22 @@ export function CartProvider({ children }) {
 
   const clearCart = () => setItems(() => []);
 
-  // Compra lo que hay en el carrito. Con backend, el BFF descuenta el stock y registra el pedido.
-  const checkout = async () => {
-    if (!owner || items.length === 0) return null;
-    if (!remote) {
-      purchaseMock(items.map((i) => ({ id: i.id, cantidad: i.cantidad })));
-      clearCart();
-      return null;
-    }
-    // Antes de comprar, el servidor debe tener el carrito exacto que ve el usuario.
+  // Antes del checkout el servidor debe tener exactamente el carrito que ve el usuario.
+  const sincronizar = async () => {
+    if (!remote) return;
     clearTimeout(timer.current);
     if (signature(items) !== lastSynced.current) await pushToServer(items);
-    const pedido = await createOrder();
-    lastSynced.current = signature([]);
-    setCart((c) => ({ ...c, items: [] }));
-    await refresh();
-    return pedido;
   };
+
+  // Tras un pago aprobado el BFF vacía el carrito: se vuelve a leer del servidor y se refresca el stock.
+  const recargar = useCallback(async () => {
+    if (!remote) return;
+    const data = await getCart();
+    const serverItems = fromServer(data.items);
+    lastSynced.current = signature(serverItems);
+    setCart((c) => (c.owner === owner ? { owner, items: serverItems } : c));
+    await refresh();
+  }, [remote, owner, refresh]);
 
   const total = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0);
   const count = items.reduce((sum, i) => sum + i.cantidad, 0);
@@ -165,13 +182,19 @@ export function CartProvider({ children }) {
         removeItem,
         updateQty,
         clearCart,
-        checkout,
+        sincronizar,
+        recargar,
+        conBackend: remote,
         total,
         count,
         canUseCart: Boolean(owner),
+        abierto,
+        abrirCarrito,
+        cerrarCarrito,
       }}
     >
       {children}
+      <CartToast aviso={abierto ? null : aviso} onVerCarrito={abrirCarrito} onCerrar={cerrarAviso} />
     </CartContext.Provider>
   );
 }

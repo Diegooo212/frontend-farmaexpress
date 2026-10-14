@@ -11,6 +11,7 @@ import StatusTrack from '../../components/StatusTrack/StatusTrack';
 import RecetaTimeline from '../../components/RecetaTimeline/RecetaTimeline';
 import { getHistorial, isOwnReceta, lastNote } from '../../utils/prescriptionStatus';
 import styles from './MyPrescriptions.module.css';
+import Skeleton from '../../components/Skeleton/Skeleton';
 
 const FARMACIAS = ['Farmacia Centro', 'Farmacia Norte', 'Farmacia Sur'];
 const MAX_COMENTARIOS = 250;
@@ -353,7 +354,7 @@ export default function MyPrescriptions() {
             Enviadas
             {misRecetas.length > 0 && <span className={styles.count}> {misRecetas.length}</span>}
           </h2>
-          {loading && <p className={styles.muted}>Cargando tus recetas…</p>}
+          {loading && <Skeleton filas={3} alto={96} etiqueta="Cargando tus recetas…" />}
           {!loading && misRecetas.length === 0 && (
             <p className={styles.muted}>
               Todavía no has enviado recetas. Cuando envíes una, aquí verás en qué paso va.

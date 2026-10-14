@@ -1,0 +1,230 @@
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 3rem var(--gutter) 4rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.accesos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.accesos a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.accesos a:hover {
+  border-color: var(--color-primary);
+}
+
+.accesos svg {
+  color: var(--color-primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.bloque h2 {
+  font-size: var(--text-lg);
+}
+
+.bloqueHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.datos dt {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.datos dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.telefono {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.telefono span {
+  flex: 1;
+  font-weight: 700;
+}
+
+.telefono svg {
+  color: var(--color-primary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.direcciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.direcciones li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.direcciones li > svg {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.predeterminada {
+  border-color: var(--color-primary) !important;
+}
+
+.predeterminada > svg {
+  color: var(--color-primary) !important;
+}
+
+.direccionTexto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.direccionTexto span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.direccionAcciones {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.chip {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .fila {
+    grid-template-columns: 1fr;
+  }
+
+  .direcciones li {
+    flex-wrap: wrap;
+  }
+}
