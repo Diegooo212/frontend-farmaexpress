@@ -1,0 +1,367 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  max-width: 75ch;
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.lead code,
+.traza {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+/* Indicador "En vivo": el punto late mientras la consulta funciona. */
+.vivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: latido 1.6s ease-in-out infinite;
+}
+
+.sinConexion {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.sinConexion .punto {
+  animation: none;
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.3;
+    transform: scale(0.75);
+  }
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.cifra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.cifra span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.cifra strong {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.historico {
+  margin-top: -0.5rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.ancho {
+  grid-column: 1 / -1;
+}
+
+.bloque h2 {
+  font-size: var(--text-lg);
+}
+
+.vacio {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------------------- Gráfico de columnas por hora */
+
+.grafico {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.columnas {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  height: 180px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.columna {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  outline: none;
+  cursor: default;
+}
+
+.columna:focus-visible {
+  box-shadow: var(--focus-ring);
+  border-radius: 4px;
+}
+
+.columnaBarra {
+  width: 100%;
+  max-width: 44px;
+  margin-inline: auto;
+  border-radius: 4px 4px 0 0;
+  background: var(--color-primary);
+  opacity: 0.85;
+  transition: height 0.5s var(--ease-out), opacity 0.15s;
+}
+
+.columnaActiva {
+  opacity: 1;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 110px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.columna:first-child .tooltip {
+  left: 0;
+  transform: none;
+}
+
+.columna:last-child .tooltip {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.tooltip span {
+  color: var(--color-text-muted);
+}
+
+.eje {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- Barras horizontales */
+
+.barras {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barraTexto {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.3rem;
+  font-size: var(--text-sm);
+}
+
+.barraTexto > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barraTexto strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.barraTexto small {
+  color: var(--color-text-muted);
+}
+
+.barraFondo {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-surface-2);
+}
+
+.barra {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-primary);
+  transition: width 0.5s var(--ease-out);
+}
+
+/* ---------------------------------------------------------------- Ventas recientes */
+
+.eventos {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eventos li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.eventoFila {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.eventos li span {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.eventos li .traza {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+}
+
+/* Una venta que acaba de llegar se ilumina un momento. */
+.nuevo {
+  animation: llegada 2.4s var(--ease-out);
+}
+
+@keyframes llegada {
+  0% {
+    background: var(--color-primary-soft);
+    transform: translateY(-6px);
+  }
+  20% {
+    transform: none;
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* ---------------------------------------------------------------- Stock bajo */
+
+.alertas {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alertas li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 40px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.alertas li svg {
+  flex: none;
+  color: var(--color-warning);
+}
+
+.alertas li span {
+  flex: 1;
+  min-width: 0;
+}
+
+.alertas li strong {
+  color: var(--color-warning);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .punto,
+  .nuevo {
+    animation: none;
+  }
+}

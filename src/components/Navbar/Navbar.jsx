@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Boxes, ClipboardList, CreditCard, Files, Network, Package, Pill, LogOut } from 'lucide-react';
+import { Activity, Boxes, ClipboardList, CreditCard, Files, Network, Package, Pill, LogOut, Waves } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import Logo from '../Logo/Logo';
@@ -10,8 +10,10 @@ const NAV_ITEMS = [
   { to: '/recetas', label: 'Todas las recetas', icon: Files },
   { to: '/pedidos', label: 'Pedidos', icon: Package },
   { to: '/inventario', label: 'Inventario y lotes', icon: Boxes },
+  { to: '/analitica', label: 'Analítica en vivo', icon: Activity },
   { to: '/medios-de-pago', label: 'Medios de pago', icon: CreditCard, soloAdmin: true },
   { to: '/rabbitmq', label: 'RabbitMQ', icon: Network, soloAdmin: true },
+  { to: '/kafka', label: 'Kafka', icon: Waves, soloAdmin: true },
 ];
 
 export default function Navbar() {

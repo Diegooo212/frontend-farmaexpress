@@ -16,6 +16,8 @@ const SORTERS = {
   'precio-asc': (a, b) => a.precio - b.precio,
   'precio-desc': (a, b) => b.precio - a.precio,
   nombre: (a, b) => a.nombre.localeCompare(b.nombre, 'es'),
+  // Unidades vendidas: las calcula el catálogo a partir del tópico Kafka de ventas.
+  vendidos: (a, b) => (b.vendidos || 0) - (a.vendidos || 0),
 };
 
 // Productos por página: 24 llena filas completas con 2, 3 o 4 columnas.
@@ -217,6 +219,7 @@ export default function Catalog() {
             <option value="relevancia">Orden sugerido</option>
             <option value="precio-asc">Menor precio</option>
             <option value="precio-desc">Mayor precio</option>
+            <option value="vendidos">Más vendidos</option>
             <option value="nombre">Nombre A–Z</option>
           </select>
         </label>

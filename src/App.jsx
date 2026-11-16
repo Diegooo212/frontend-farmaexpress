@@ -12,6 +12,8 @@ import MyOrders from './pages/MyOrders/MyOrders';
 import Inventory from './pages/Inventory/Inventory';
 import PaymentProviders from './pages/PaymentProviders/PaymentProviders';
 import RabbitAdmin from './pages/RabbitAdmin/RabbitAdmin';
+import KafkaAdmin from './pages/KafkaAdmin/KafkaAdmin';
+import Analytics from './pages/Analytics/Analytics';
 import OrderDetail from './pages/OrderDetail/OrderDetail';
 import OrdersPanel from './pages/OrdersPanel/OrdersPanel';
 import Receipt from './pages/Receipt/Receipt';
@@ -112,6 +114,8 @@ export default function App() {
         <Route path="/inventario" element={panel(<Inventory />)} />
         <Route path="/medios-de-pago" element={panel(<PaymentProviders />, ADMIN_ROLES)} />
         <Route path="/rabbitmq" element={panel(<RabbitAdmin />, ADMIN_ROLES)} />
+        <Route path="/kafka" element={panel(<KafkaAdmin />, ADMIN_ROLES)} />
+        <Route path="/analitica" element={panel(<Analytics />)} />
 
         <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
       </Routes>
